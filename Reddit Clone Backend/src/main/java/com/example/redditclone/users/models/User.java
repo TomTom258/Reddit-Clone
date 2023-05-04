@@ -1,4 +1,4 @@
-package users.models;
+package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

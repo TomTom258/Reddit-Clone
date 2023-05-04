@@ -1,5 +1,6 @@
 package users.models;
 
+import com.example.redditclone.users.models.User;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
