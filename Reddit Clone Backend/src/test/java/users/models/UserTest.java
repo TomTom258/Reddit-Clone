@@ -1,8 +1,6 @@
 package users.models;
 
 import org.junit.jupiter.api.Test;
-import org.thymeleaf.util.DateUtils;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
