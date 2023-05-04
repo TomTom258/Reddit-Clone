@@ -6,7 +6,6 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
 @Entity(name = "user")
 @Table(name = "Users")
 public class User {
@@ -133,10 +132,6 @@ public class User {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public boolean isMfa() {
