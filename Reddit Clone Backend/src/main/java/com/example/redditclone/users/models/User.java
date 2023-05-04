@@ -1,6 +1,8 @@
 package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,12 +30,6 @@ public class User {
     @Column(name = "verification_token_expires_at", nullable = false)
     private LocalDateTime verificationTokenExpiresAt;
 
-    @Column(name = "forgotten_password_token", nullable = true, unique = true)
-    private String forgottenPasswordToken;
-
-    @Column(name = "forgotten_password_token_expires_at", nullable = true)
-    private LocalDateTime forgottenPasswordExpiresAt;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -53,6 +49,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.verifiedAt = null;
         this.verificationToken = UUID.randomUUID().toString();
         this.verificationTokenExpiresAt = LocalDateTime.now().plusHours(1);
         this.createdAt = LocalDateTime.now();
@@ -110,22 +107,6 @@ public class User {
 
     public void setVerificationTokenExpiresAt(LocalDateTime verificationTokenExpiresAt) {
         this.verificationTokenExpiresAt = verificationTokenExpiresAt;
-    }
-
-    public String getForgottenPasswordToken() {
-        return forgottenPasswordToken;
-    }
-
-    public void setForgottenPasswordToken(String forgottenPasswordToken) {
-        this.forgottenPasswordToken = forgottenPasswordToken;
-    }
-
-    public LocalDateTime getForgottenPasswordExpiresAt() {
-        return forgottenPasswordExpiresAt;
-    }
-
-    public void setForgottenPasswordExpiresAt(LocalDateTime forgottenPasswordExpiresAt) {
-        this.forgottenPasswordExpiresAt = forgottenPasswordExpiresAt;
     }
 
     public LocalDateTime getCreatedAt() {
