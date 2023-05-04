@@ -1,8 +1,10 @@
 package users.models;
 
 import org.junit.jupiter.api.Test;
+import org.thymeleaf.util.DateUtils;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,5 +37,11 @@ class UserTest {
     void get_time_created() {
         User user = new User("testUsername", "test@email.com", "testPassword", false);
         assertEquals(LocalDateTime.now(), user.getCreatedAt());
+    }
+
+    @Test
+    void verification_token_expires_in_one_hour() {
+        User user = new User("testUsername", "test@email.com", "testPassword", false);
+        assertEquals(LocalDateTime.now().plusHours(1).truncatedTo(ChronoUnit.MINUTES), user.getVerificationTokenExpiresAt().truncatedTo(ChronoUnit.MINUTES));
     }
 }
