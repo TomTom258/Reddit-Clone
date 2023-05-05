@@ -20,8 +20,13 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "karma")
+    private Long karma;
+
     @Column(name = "verified_at", nullable = true)
     private LocalDateTime verifiedAt;
+
     @Column(name = "verification_token", nullable = false, unique = true)
     private String verificationToken;
 
@@ -53,6 +58,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
         this.mfa = mfa;
         this.secret = "";
+        this.karma = 0L;
     }
 
     public Long getId() {

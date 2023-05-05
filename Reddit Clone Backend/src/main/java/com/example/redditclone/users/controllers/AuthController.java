@@ -1,6 +1,7 @@
 package com.example.redditclone.users.controllers;
 
 import com.example.redditclone.dtos.ErrorResponseDto;
+import com.example.redditclone.dtos.LoginDto;
 import com.example.redditclone.dtos.OkResponseDto;
 import com.example.redditclone.dtos.RegisterDto;
 import com.example.redditclone.users.repositories.UserRepository;
