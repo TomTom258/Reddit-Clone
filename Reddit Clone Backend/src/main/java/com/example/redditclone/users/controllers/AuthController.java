@@ -26,20 +26,18 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity register(@RequestBody RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>(new ErrorResponseDto("Username is taken!"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ErrorResponseDto("Username is already taken"), HttpStatus.CONFLICT);
         }
         User newUser = new User(
                 registerDto.getUsername(),
                 registerDto.getEmail(),
                 registerDto.getPassword(),
                 registerDto.isMfa());
-
         try {
             registrationValidator.registerUser(newUser);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
-
         return new ResponseEntity<>(new OkResponseDto(200, "Registration successful"), HttpStatus.OK);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,7 +38,7 @@ public class User {
     private String secret;
 
     public User() {
-        this.verificationToken = UUID.randomUUID().toString();
+        this.verificationToken = "";
         this.verificationTokenExpiresAt = LocalDateTime.now().plusHours(1);
         this.createdAt = LocalDateTime.now();
     }
