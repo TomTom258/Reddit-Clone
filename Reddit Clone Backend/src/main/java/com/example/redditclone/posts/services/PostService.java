@@ -1,4 +1,4 @@
-package com.example.redditclone.users.services;
+package com.example.redditclone.posts.services;
 
 import org.springframework.stereotype.Service;
 

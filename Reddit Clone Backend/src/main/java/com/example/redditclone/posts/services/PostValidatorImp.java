@@ -1,8 +1,7 @@
-package com.example.redditclone.users.services;
+package com.example.redditclone.posts.services;
 
-import com.example.redditclone.dtos.PostDto;
-import com.example.redditclone.users.models.Post;
-import com.example.redditclone.users.repositories.PostRepository;
+import com.example.redditclone.posts.models.Post;
+import com.example.redditclone.posts.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

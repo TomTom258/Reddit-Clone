@@ -1,12 +1,12 @@
-package com.example.redditclone.users.controllers;
+package com.example.redditclone.posts.controllers;
 
 import com.example.redditclone.dtos.ErrorResponseDto;
 import com.example.redditclone.dtos.OkResponseDto;
 import com.example.redditclone.dtos.PostDto;
 import com.example.redditclone.dtos.ResponseDto;
-import com.example.redditclone.users.models.Post;
-import com.example.redditclone.users.services.PostService;
-import com.example.redditclone.users.services.PostValidator;
+import com.example.redditclone.posts.models.Post;
+import com.example.redditclone.posts.services.PostService;
+import com.example.redditclone.posts.services.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

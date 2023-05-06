@@ -1,6 +1,6 @@
-package com.example.redditclone.users.services;
+package com.example.redditclone.posts.services;
 
-import com.example.redditclone.users.models.Post;
+import com.example.redditclone.posts.models.Post;
 import org.springframework.stereotype.Service;
 
 @Service
