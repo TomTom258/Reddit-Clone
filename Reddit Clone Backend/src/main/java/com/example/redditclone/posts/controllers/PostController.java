@@ -71,4 +71,14 @@ public class PostController {
         }
         return new ResponseEntity<>(new OkResponseDto(201, "Post was successfully downvoted"), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseDto> deletePost(@PathVariable long id) {
+        try {
+            postService.deletePost(id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return new ResponseEntity<>(new OkResponseDto(204, "Post was successfully removed"), HttpStatus.NO_CONTENT);
+    }
 }
