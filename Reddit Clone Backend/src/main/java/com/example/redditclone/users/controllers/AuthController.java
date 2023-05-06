@@ -2,6 +2,7 @@ package com.example.redditclone.users.controllers;
 
 import com.example.redditclone.dtos.*;
 import com.example.redditclone.users.models.Post;
+import com.example.redditclone.users.repositories.PostRepository;
 import com.example.redditclone.users.repositories.UserRepository;
 import com.example.redditclone.users.services.PostValidator;
 import com.example.redditclone.users.services.RegistrationValidator;
@@ -20,13 +21,14 @@ public class AuthController {
     private PostValidator postValidator;
 
     @Autowired
-    public AuthController(UserRepository userRepository, RegistrationValidator registrationValidator, PostValidator postValidator) {
+    public AuthController(UserRepository userRepository, RegistrationValidator registrationValidator, PostValidator postValidator, PostRepository postRepository) {
         this.userRepository = userRepository;
         this.registrationValidator = registrationValidator;
         this.postValidator = postValidator;
+        this.postRepository = postRepository;
     }
     @PostMapping("register")
-    public ResponseEntity register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             return new ResponseEntity<>(new ErrorResponseDto("Username is already taken"), HttpStatus.CONFLICT);
         }
@@ -44,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("post")
-    public ResponseEntity post(@RequestBody PostDto postDto) {
+    public ResponseEntity<ResponseDto> post(@RequestBody PostDto postDto) {
         Post newPost = new Post(
                 postDto.getTitle(),
                 postDto.getContent(),
@@ -55,5 +57,19 @@ public class AuthController {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
         return new ResponseEntity<>(new OkResponseDto(201, "Post was successfully added"), HttpStatus.CREATED);
+    }
+
+    @PutMapping("posts/{id}")
+    public ResponseEntity<ResponseDto> editPost(@PathVariable long id, @RequestBody PostDto postDto) {
+        Post newPost = new Post(
+                postDto.getTitle(),
+                postDto.getContent(),
+                "test");
+        try {
+            postValidator.editThePost(newPost, id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return new ResponseEntity<>(new OkResponseDto(200, "Post was successfully changed"), HttpStatus.OK);
     }
 }

@@ -72,6 +72,10 @@ public class Post {
         return created_at;
     }
 
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+
     public String getOwner() {
         return owner;
     }

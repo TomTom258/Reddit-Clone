@@ -1,6 +1,6 @@
 package com.example.redditclone.dtos;
 
-public class OkResponseDto {
+public class OkResponseDto extends ResponseDto{
     private Integer status;
     private String message;
 

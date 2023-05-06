@@ -1,11 +1,14 @@
 package com.example.redditclone.users.services;
 
+import com.example.redditclone.dtos.PostDto;
 import com.example.redditclone.users.models.Post;
 import com.example.redditclone.users.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
 
 @Service
 public class PostValidatorImp implements PostValidator{
@@ -40,6 +43,22 @@ public class PostValidatorImp implements PostValidator{
         if (isTitleValid && isContentValid) {
             Post newPost = new Post(post.getTitle(), post.getContent(), "testOwner");
             postRepository.save(newPost);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");
+        }
+    }
+
+    @Override
+    public boolean editThePost(Post post, Long id) {
+        boolean isTitleValid = validateTitle(post);
+        boolean isContentValid = validateContent(post);
+        if (isTitleValid && isContentValid) {
+            Post oldPost = postRepository.getReferenceById(id);
+            oldPost.setTitle(post.getTitle());
+            oldPost.setContent(post.getContent());
+            oldPost.setCreated_at(LocalDateTime.now());
+            postRepository.save(oldPost);
             return true;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");

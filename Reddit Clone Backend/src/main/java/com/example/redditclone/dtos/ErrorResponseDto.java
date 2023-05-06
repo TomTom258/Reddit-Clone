@@ -1,6 +1,6 @@
 package com.example.redditclone.dtos;
 
-public class ErrorResponseDto {
+public class ErrorResponseDto extends ResponseDto{
     private String error;
 
     public ErrorResponseDto() {
