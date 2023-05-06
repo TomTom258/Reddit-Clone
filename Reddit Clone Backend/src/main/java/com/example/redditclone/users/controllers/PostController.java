@@ -5,6 +5,7 @@ import com.example.redditclone.dtos.OkResponseDto;
 import com.example.redditclone.dtos.PostDto;
 import com.example.redditclone.dtos.ResponseDto;
 import com.example.redditclone.users.models.Post;
+import com.example.redditclone.users.services.PostService;
 import com.example.redditclone.users.services.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class PostController {
 
     private PostValidator postValidator;
+    private PostService postService;
     @Autowired
-    public PostController(PostValidator postValidator) {
+    public PostController(PostValidator postValidator, PostService postService) {
         this.postValidator = postValidator;
+        this.postService = postService;
     }
     @PostMapping("add")
     public ResponseEntity<ResponseDto> post(@RequestBody PostDto postDto) {
@@ -47,5 +50,25 @@ public class PostController {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
         return new ResponseEntity<>(new OkResponseDto(200, "Post was successfully changed"), HttpStatus.OK);
+    }
+
+    @PostMapping("upvote/{id}")
+    public ResponseEntity<ResponseDto> upvotePost(@PathVariable long id) {
+        try {
+            postService.upvotePost(id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return new ResponseEntity<>(new OkResponseDto(201, "Post was successfully upvoted"), HttpStatus.CREATED);
+    }
+
+    @PostMapping("downvote/{id}")
+    public ResponseEntity<ResponseDto> downvotePost(@PathVariable long id) {
+        try {
+            postService.downvotePost(id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return new ResponseEntity<>(new OkResponseDto(201, "Post was successfully downvoted"), HttpStatus.CREATED);
     }
 }

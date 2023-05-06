@@ -132,4 +132,12 @@ public class User {
     public void setSecret(String secret) {
         this.secret = secret;
     }
+
+    public Long getKarma() {
+        return karma;
+    }
+
+    public void setKarma(Long karma) {
+        this.karma = karma;
+    }
 }
