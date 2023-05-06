@@ -4,6 +4,7 @@ import com.example.redditclone.users.models.Post;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.PostRepository;
 import com.example.redditclone.users.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +15,7 @@ public class PostServiceImp implements PostService{
     private PostRepository postRepository;
     private UserRepository userRepository;
 
+    @Autowired
     public PostServiceImp(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
