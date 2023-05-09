@@ -36,6 +36,6 @@ public class AuthController {
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
-        return new ResponseEntity<>(new OkResponseDto(200, "Registration successful"), HttpStatus.OK);
+        return new ResponseEntity<>(new OkResponseDto(201, "Registration successful"), HttpStatus.CREATED);
     }
 }

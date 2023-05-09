@@ -37,6 +37,8 @@ dependencies {
 	implementation 'javax.mail:mail:1.4.7'
 	implementation 'javax.mail:javax.mail-api:1.6.2'
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+	implementation 'junit:junit:4.13.2'
+	implementation 'io.rest-assured:spring-mock-mvc:5.3.0'
 }
 
 tasks.named('test') {
