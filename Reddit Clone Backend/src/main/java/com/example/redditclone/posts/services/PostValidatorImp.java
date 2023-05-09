@@ -29,7 +29,7 @@ public class PostValidatorImp implements PostValidator{
 
     @Override
     public boolean validateContent(Post post) {
-        if (post.getTitle().length() < 8) {
+        if (post.getContent().length() < 8) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The content must be at least 8 characters long");
         }
         return true;

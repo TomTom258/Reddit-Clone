@@ -24,7 +24,6 @@ class RegistrationValidatorImpTest {
     void validateUsername_returns_true_with_correct_input() {
         User fakeUser = new User("username", "email@email.com", "password", false);
 
-        Mockito.when(fakeRepository.findByUsername(Mockito.any())).thenReturn(null);
         Boolean result = fakeValidator.validateUsername(fakeUser);
         assertEquals(true, result);
     }
