@@ -82,4 +82,8 @@ public class Comment {
     public void setPost(Post post) {
         this.post = post;
     }
+
+    public Long getPostId(){
+        return post.getId();
+    }
 }

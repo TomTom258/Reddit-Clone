@@ -1,6 +1,7 @@
 package com.example.redditclone.comments.services;
 
 import com.example.redditclone.comments.models.Comment;
+import com.example.redditclone.comments.repositories.CommentRepository;
 import com.example.redditclone.dtos.CommentDto;
 import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.repositories.PostRepository;
@@ -16,10 +17,12 @@ import java.util.Set;
 public class CommentValidatorImp implements CommentValidator{
 
     PostRepository postRepository;
+    CommentRepository commentRepository;
 
     @Autowired
-    public CommentValidatorImp(PostRepository postRepository) {
+    public CommentValidatorImp(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
     @Override
     public boolean validateId(Long id) {
@@ -52,6 +55,28 @@ public class CommentValidatorImp implements CommentValidator{
             commentsList.add(newComment);
             commentedPost.setComments(commentsList);
             postRepository.save(commentedPost);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");
+        }
+    }
+
+    @Override
+    public boolean editTheComment(CommentDto commentDto, Long commentId) {
+        Long postId = commentRepository.getReferenceById(commentId).getPostId();
+
+        boolean isIdValid = validateId(postId);
+        boolean isContentValid = validateContent(commentDto.getContent());
+
+        if (isIdValid && isContentValid) {
+            Post editedPost = postRepository.getReferenceById(postId);
+            Comment editedComment = commentRepository.getReferenceById(commentId);
+            Set<Comment> commentsList = editedPost.getComments();
+
+            editedComment.setContent(commentDto.getContent());
+            commentsList.add(editedComment);
+            editedPost.setComments(commentsList);
+            postRepository.save(editedPost);
             return true;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");
