@@ -1,10 +1,8 @@
 package com.example.redditclone.posts.controllers;
 
-import com.example.redditclone.dtos.ErrorResponseDto;
-import com.example.redditclone.dtos.OkResponseDto;
-import com.example.redditclone.dtos.PostDto;
-import com.example.redditclone.dtos.ResponseDto;
+import com.example.redditclone.dtos.*;
 import com.example.redditclone.posts.models.Post;
+import com.example.redditclone.posts.repositories.PostRepository;
 import com.example.redditclone.posts.services.PostService;
 import com.example.redditclone.posts.services.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +11,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/posts")
 public class PostController {
 
     private PostValidator postValidator;
     private PostService postService;
+    private PostRepository postRepository;
     @Autowired
-    public PostController(PostValidator postValidator, PostService postService) {
+    public PostController(PostValidator postValidator, PostService postService, PostRepository postRepository) {
         this.postValidator = postValidator;
         this.postService = postService;
+        this.postRepository = postRepository;
     }
+    @GetMapping("get")
+    public ResponseEntity<List<Post>> getAllPosts() {
+        List<Post> storedPosts = postRepository.findAll();
+
+        return ResponseEntity.ok(storedPosts);
+    }
+
     @PostMapping("add")
     public ResponseEntity<ResponseDto> post(@RequestBody PostDto postDto) {
         Post newPost = new Post(
