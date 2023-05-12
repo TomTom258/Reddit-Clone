@@ -1,23 +1,18 @@
-package com.example.redditclone.posts.models;
+package com.example.redditclone.comments.models;
 
-import com.example.redditclone.comments.models.Comment;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.example.redditclone.posts.models.Post;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
-@Entity(name = "post")
-@Table(name = "Posts")
-public class Post {
+@Entity(name = "comment")
+@Table(name = "Comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
     Long id;
-
-    @Column(name = "title")
-    String title;
 
     @Column(name = "content", length = 1337)
     String content;
@@ -31,29 +26,20 @@ public class Post {
     @Column(name = "reputation")
     Long reputation;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
-    private Set<Comment> comments;
+    @ManyToOne
+    @JoinColumn(name = "post_id", insertable = false)
+    private Post post;
 
-    public Post() {
+    public Comment() {
         this.created_at = LocalDateTime.now();
         this.reputation = 0L;
     }
 
-    public Post(String title, String content, String owner) {
-        this.title = title;
+    public Comment(String content, String owner) {
         this.content = content;
         this.owner = owner;
         this.created_at = LocalDateTime.now();
         this.reputation = 0L;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -88,12 +74,12 @@ public class Post {
         return owner;
     }
 
-    @JsonManagedReference
-    public Set<Comment> getComments() {
-        return comments;
+    @JsonBackReference
+    public Post getPost() {
+        return post;
     }
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
+    public void setPost(Post post) {
+        this.post = post;
     }
 }
