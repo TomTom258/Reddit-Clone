@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .env
-SecurityConstants.java
+src/main/java/com.example.redditclone/security/SecurityConstants.java
 
 ### STS ###
 .apt_generated
