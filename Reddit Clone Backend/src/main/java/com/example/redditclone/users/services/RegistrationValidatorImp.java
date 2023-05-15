@@ -76,4 +76,9 @@ public class RegistrationValidatorImp implements RegistrationValidator {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");
         }
     }
+
+    @Override
+    public Long retrieveUserId(String username) {
+        return userRepository.findByUsername(username).getId();
+    }
 }

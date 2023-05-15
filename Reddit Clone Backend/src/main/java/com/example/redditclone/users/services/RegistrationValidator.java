@@ -12,4 +12,6 @@ public interface RegistrationValidator {
     public boolean validateEmail(User user);
 
     public boolean registerUser(User user);
+
+    public Long retrieveUserId(String username);
 }
