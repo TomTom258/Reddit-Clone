@@ -2,6 +2,7 @@ package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "user")
@@ -41,6 +42,16 @@ public class User {
 
     @Column(name  = "secret")
     private String secret;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_permissions", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permissions_id")})
+    @Column(name = "permissions", nullable = true)
+    private Set<Permission> permissions;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "roles_id")})
+    @Column(name = "roles", nullable = true)
+    private Set<Role> roles;
 
     public User() {
         this.verificationToken = "";
@@ -139,5 +150,21 @@ public class User {
 
     public void setKarma(Long karma) {
         this.karma = karma;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
