@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification email</title>
+</head>
+<body>
+<p> Hello, Dear <span th:text="${name}"></span>!</p>
+<p>Thank you for registering in our RedditClone online service. To fully unlock your account we need you to first verify your e-mail address.</p>
+<p>Please click on link below until <span th:text="${expirationTime}"></span> to get your e-mail address verified. </br>
+    <a th:href="@{'http://localhost:8080/api/auth/email/verify?token=' + ${verificationToken}}" >Click on this link</a>
+</p>
+<p>Didn't make it ? Don't worry. Resend your e-mail verification code from your profile in our app.</p>
+<p>Your RedditClone Team</p>
+<p>This email was generated automatically. Please, don't respond to it.</p>
+</body>
+</html>
+
+
+
+

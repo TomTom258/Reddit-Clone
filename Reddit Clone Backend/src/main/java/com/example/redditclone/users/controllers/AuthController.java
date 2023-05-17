@@ -1,9 +1,11 @@
 package com.example.redditclone.users.controllers;
 
 import com.example.redditclone.dtos.*;
+import com.example.redditclone.emailService.EmailSenderService;
 import com.example.redditclone.security.JWTGenerator;
 import com.example.redditclone.users.repositories.UserRepository;
 import com.example.redditclone.users.services.RegistrationValidator;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +24,16 @@ public class AuthController {
     private RegistrationValidator registrationValidator;
     private AuthenticationManager authenticationManager;
     private JWTGenerator jwtGenerator;
+    private EmailSenderService emailSenderService;
 
     @Autowired
     public AuthController(UserRepository userRepository, RegistrationValidator registrationValidator, AuthenticationManager authenticationManager,
-                          JWTGenerator jwtGenerator) {
+                          JWTGenerator jwtGenerator, EmailSenderService emailSenderService) {
         this.userRepository = userRepository;
         this.registrationValidator = registrationValidator;
         this.authenticationManager = authenticationManager;
         this.jwtGenerator = jwtGenerator;
+        this.emailSenderService = emailSenderService;
     }
     @PostMapping("register")
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto registerDto) {
@@ -43,8 +47,11 @@ public class AuthController {
                 registerDto.isMfa());
         try {
             registrationValidator.registerUser(newUser);
+            emailSenderService.sendHtmlEmail("verificationEmail", newUser);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
         return new ResponseEntity<>(new OkResponseDto(201, "Registration successful"), HttpStatus.CREATED);
     }
