@@ -38,7 +38,7 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>(new ErrorResponseDto("Username is already taken"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ErrorResponseDto("Username is already taken!"), HttpStatus.CONFLICT);
         }
         User newUser = new User(
                 registerDto.getUsername(),
@@ -47,13 +47,14 @@ public class AuthController {
                 registerDto.isMfa());
         try {
             registrationValidator.registerUser(newUser);
-            emailSenderService.sendHtmlEmail("verificationEmail", newUser);
+            User findUser = userRepository.findByUsername(newUser.getUsername());
+            emailSenderService.sendHtmlEmail("verificationEmail", findUser);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<>(new OkResponseDto(201, "Registration successful"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new OkResponseDto(201, "Registration successful."), HttpStatus.CREATED);
     }
 
     @PostMapping("login")
@@ -69,5 +70,27 @@ public class AuthController {
         User user = userRepository.findByUsername(loginDto.getUsername());
 
         return new ResponseEntity<>(new AuthResponseDto(token, loginDto.getUsername(), id, user.isMfa()), HttpStatus.OK);
+    }
+
+    @GetMapping("/email/verify")
+    public ResponseEntity<ResponseDto> verifyEmailAddress(@RequestParam String token) {
+        try {
+            emailSenderService.verifyEmailAddress(token);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return ResponseEntity.ok(new OkResponseDto(200, "Email successfully verified."));
+    }
+
+    @PostMapping("/email/verify/resend/{id}")
+    public ResponseEntity<ResponseDto> resendVerificationEmail(@PathVariable Long id) {
+        try {
+            emailSenderService.resendVerificationEmail(id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.ok(new OkResponseDto(201, "Email verification message resent."));
     }
 }

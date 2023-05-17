@@ -25,16 +25,16 @@ public class User {
     @Column(name = "karma")
     private Long karma;
 
-    @Column(name = "verified_at", nullable = true)
+    @Column(name = "verifiedAt", nullable = true)
     private LocalDateTime verifiedAt;
 
-    @Column(name = "verification_token", nullable = false, unique = true)
+    @Column(name = "verificationToken", nullable = false, unique = true)
     private String verificationToken;
 
-    @Column(name = "verification_token_expires_at", nullable = false)
+    @Column(name = "verificationTokenExpiresAt", nullable = false)
     private LocalDateTime verificationTokenExpiresAt;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "mfa")
@@ -54,7 +54,7 @@ public class User {
     private Set<Role> roles;
 
     public User() {
-        this.verificationToken = "";
+        this.verificationToken = UUID.randomUUID().toString();
         this.verificationTokenExpiresAt = LocalDateTime.now().plusHours(1);
         this.createdAt = LocalDateTime.now();
     }
