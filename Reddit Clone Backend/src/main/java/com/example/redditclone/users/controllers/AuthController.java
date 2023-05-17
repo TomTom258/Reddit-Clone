@@ -82,7 +82,7 @@ public class AuthController {
         return ResponseEntity.ok(new OkResponseDto(200, "Email successfully verified."));
     }
 
-    @PostMapping("/email/verify/resend/{id}")
+    @PutMapping("/email/verify/resend/{id}")
     public ResponseEntity<ResponseDto> resendVerificationEmail(@PathVariable Long id) {
         try {
             emailSenderService.resendVerificationEmail(id);
