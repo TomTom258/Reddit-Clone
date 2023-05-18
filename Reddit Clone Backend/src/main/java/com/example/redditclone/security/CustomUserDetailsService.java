@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             com.example.redditclone.users.models.User user = userRepository.findByUsername(username);
-            return new org.springframework.security.core.userdetails.User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), mapRolesToAuthorities(user.getRoles()));
+            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException("Username not found");
         }

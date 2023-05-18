@@ -1,9 +1,11 @@
 package com.example.redditclone.users.services;
 
+import com.example.redditclone.security.TotpManager;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import javax.mail.internet.AddressException;
@@ -12,10 +14,14 @@ import javax.mail.internet.InternetAddress;
 @Service
 public class RegistrationValidatorImp implements RegistrationValidator {
     private UserRepository userRepository;
+    private TotpManager totpManager;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public RegistrationValidatorImp(UserRepository userRepository) {
+    public RegistrationValidatorImp(UserRepository userRepository, TotpManager totpManager, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.totpManager = totpManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -69,7 +75,10 @@ public class RegistrationValidatorImp implements RegistrationValidator {
         boolean isUsernameValid = validateUsername(user);
         boolean isPasswordValid = validatePassword(user);
         if (isEmailValid && isUsernameValid && isPasswordValid) {
-            User newUser = new User(user.getUsername(), user.getEmail(), user.getPassword(), user.isMfa());
+            User newUser = new User(user.getUsername(), user.getEmail(), passwordEncoder.encode(user.getPassword()), user.isMfa());
+            if (newUser.isMfa()) {
+                newUser.setSecret(totpManager.generateSecret());
+            }
             userRepository.save(newUser);
             return true;
         } else {

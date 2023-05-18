@@ -3,6 +3,7 @@ package com.example.redditclone.users.controllers;
 import com.example.redditclone.dtos.*;
 import com.example.redditclone.emailService.EmailSenderService;
 import com.example.redditclone.security.JWTGenerator;
+import com.example.redditclone.security.TotpManager;
 import com.example.redditclone.users.repositories.UserRepository;
 import com.example.redditclone.users.services.RegistrationValidator;
 import jakarta.mail.MessagingException;
@@ -25,15 +26,17 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private JWTGenerator jwtGenerator;
     private EmailSenderService emailSenderService;
+    private TotpManager totpManager;
 
     @Autowired
     public AuthController(UserRepository userRepository, RegistrationValidator registrationValidator, AuthenticationManager authenticationManager,
-                          JWTGenerator jwtGenerator, EmailSenderService emailSenderService) {
+                          JWTGenerator jwtGenerator, EmailSenderService emailSenderService, TotpManager totpManager) {
         this.userRepository = userRepository;
         this.registrationValidator = registrationValidator;
         this.authenticationManager = authenticationManager;
         this.jwtGenerator = jwtGenerator;
         this.emailSenderService = emailSenderService;
+        this.totpManager = totpManager;
     }
     @PostMapping("register")
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto registerDto) {
@@ -69,7 +72,11 @@ public class AuthController {
         Long id = registrationValidator.retrieveUserId(loginDto.getUsername());
         User user = userRepository.findByUsername(loginDto.getUsername());
 
-        return new ResponseEntity<>(new AuthResponseDto(token, loginDto.getUsername(), id, user.isMfa()), HttpStatus.OK);
+        if (user.isMfa()) {
+            return new ResponseEntity<>(new AuthMfaResponseDto(token, id, user.isMfa(), totpManager.getUriForImage(user.getSecret())), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new AuthResponseDto(token, loginDto.getUsername(), id, user.isMfa()), HttpStatus.OK);
+        }
     }
 
     @GetMapping("/email/verify")
@@ -80,6 +87,17 @@ public class AuthController {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
         return ResponseEntity.ok(new OkResponseDto(200, "Email successfully verified."));
+    }
+
+    @PostMapping("verify")
+    public ResponseEntity verifyMfa(@RequestBody MfaDto mfaDto) {
+        User user = userRepository.findById(mfaDto.getId()).get();
+
+        if (!totpManager.verifyCode(mfaDto.getCode(), user.getSecret())) {
+            return new ResponseEntity<>(new ErrorResponseDto("Code is incorrect"), HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(new MfaResponseDto(user.getId(), user.getUsername(), 200, "Verification successful"), HttpStatus.OK);
+        }
     }
 
     @PutMapping("/email/verify/resend/{id}")
