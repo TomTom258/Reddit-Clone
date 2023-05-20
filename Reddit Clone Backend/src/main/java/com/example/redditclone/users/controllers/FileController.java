@@ -32,7 +32,7 @@ public class FileController {
     public ResponseEntity<ResponseDto> uploadProfilePicture(@RequestParam("File")MultipartFile multipartFile, @PathVariable long id) throws IOException {
         if (!multipartFile.isEmpty()) {
             try {
-                String uploadsDir = "/uploads/profilePictures/";
+                String uploadsDir = "/uploads/";
                 String realPathtoUploads = request.getServletContext().getRealPath(uploadsDir);
 
                 if (!new File(realPathtoUploads).exists()) {
