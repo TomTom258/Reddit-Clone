@@ -1,6 +1,8 @@
 package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
+
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -43,6 +45,9 @@ public class User {
     @Column(name  = "secret")
     private String secret;
 
+    @Column(name = "profilePictureFilePath")
+    private String profilePictureFilePath;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_permissions", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permissions_id")})
     @Column(name = "permissions", nullable = true)
@@ -70,6 +75,7 @@ public class User {
         this.mfa = mfa;
         this.secret = "";
         this.karma = 0L;
+        this.profilePictureFilePath = "";
     }
 
     public Long getId() {
@@ -166,5 +172,13 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getProfilePictureFilePath() {
+        return profilePictureFilePath;
+    }
+
+    public void setProfilePictureFilePath(String profilePictureFilePath) {
+        this.profilePictureFilePath = profilePictureFilePath;
     }
 }
