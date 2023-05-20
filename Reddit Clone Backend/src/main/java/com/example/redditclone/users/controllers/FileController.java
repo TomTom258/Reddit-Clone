@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("files")
@@ -40,7 +41,14 @@ public class FileController {
                 }
 
                 String orgName = multipartFile.getOriginalFilename();
-                String filePath = realPathtoUploads + orgName;
+                String extension = orgName.substring(orgName.lastIndexOf(".") + 1);
+                String newFileName = UUID.randomUUID().toString() + "." + extension;
+
+                while(userRepository.existsByProfilePictureFilePath(newFileName)) {
+                    newFileName = UUID.randomUUID().toString() + "." + extension;
+                }
+
+                String filePath = realPathtoUploads + newFileName;
                 User user = userRepository.getReferenceById(id);
 
                 File dest = new File(filePath);
