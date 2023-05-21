@@ -48,6 +48,15 @@ public class User {
     @Column(name = "profilePictureFilePath")
     private String profilePictureFilePath;
 
+    @Column(name = "forgottenPasswordToken", nullable = true, unique = true)
+    private String forgottenPasswordToken;
+
+    @Column(name = "forgottenPasswordTokenExpiresAt", nullable = true)
+    private LocalDateTime forgottenPasswordExpiresAt;
+
+    @Column(name = "resetPasswordToken", nullable = true)
+    private String resetPasswordToken;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_permissions", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permissions_id")})
     @Column(name = "permissions", nullable = true)
@@ -180,5 +189,29 @@ public class User {
 
     public void setProfilePictureFilePath(String profilePictureFilePath) {
         this.profilePictureFilePath = profilePictureFilePath;
+    }
+
+    public String getForgottenPasswordToken() {
+        return forgottenPasswordToken;
+    }
+
+    public void setForgottenPasswordToken(String forgottenPasswordToken) {
+        this.forgottenPasswordToken = forgottenPasswordToken;
+    }
+
+    public LocalDateTime getForgottenPasswordExpiresAt() {
+        return forgottenPasswordExpiresAt;
+    }
+
+    public void setForgottenPasswordExpiresAt(LocalDateTime forgottenPasswordExpiresAt) {
+        this.forgottenPasswordExpiresAt = forgottenPasswordExpiresAt;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 }

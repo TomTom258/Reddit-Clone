@@ -9,4 +9,5 @@ public interface EmailSenderService {
     void sendHtmlEmail(String emailType, User user) throws MessagingException;
     boolean verifyEmailAddress(String token);
     boolean resendVerificationEmail(Long id) throws MessagingException;
+    boolean resetPasswordEmail(String email) throws MessagingException;
 }

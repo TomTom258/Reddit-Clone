@@ -10,4 +10,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username);
     User findByVerificationToken(String token);
     Boolean existsByProfilePictureFilePath(String profilePictureFilePath);
+    User findByResetPasswordToken(String token);
 }

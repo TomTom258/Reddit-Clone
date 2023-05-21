@@ -79,16 +79,6 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/email/verify")
-    public ResponseEntity<ResponseDto> verifyEmailAddress(@RequestParam String token) {
-        try {
-            emailSenderService.verifyEmailAddress(token);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
-        }
-        return ResponseEntity.ok(new OkResponseDto(200, "Email successfully verified."));
-    }
-
     @PostMapping("verify")
     public ResponseEntity verifyMfa(@RequestBody MfaDto mfaDto) {
         User user = userRepository.findById(mfaDto.getId()).get();
@@ -98,6 +88,16 @@ public class AuthController {
         } else {
             return new ResponseEntity<>(new MfaResponseDto(user.getId(), user.getUsername(), 200, "Verification successful"), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/email/verify")
+    public ResponseEntity<ResponseDto> verifyEmailAddress(@RequestParam String token) {
+        try {
+            emailSenderService.verifyEmailAddress(token);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return ResponseEntity.ok(new OkResponseDto(200, "Email successfully verified."));
     }
 
     @PutMapping("/email/verify/resend/{id}")
@@ -110,5 +110,39 @@ public class AuthController {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(new OkResponseDto(201, "Email verification message resent."));
+    }
+
+    @PostMapping("/send-reset-password")
+    public ResponseEntity sendPasswordRecoveryEmail(@RequestBody EmailRequestDto emailDto) {
+        try {
+            registrationValidator.setForgottenPasswordToken(emailDto.getEmail());
+            emailSenderService.resetPasswordEmail(emailDto.getEmail());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.ok(new OkResponseDto(201, "Reset password email has been sent."));
+    }
+
+    @PostMapping("/reset-password-code")
+    public ResponseEntity checkPasswordToken(@RequestBody CodeRequestDto codeDto) {
+        try {
+            registrationValidator.validateResetPasswordToken(codeDto.getCode(), codeDto.getEmail());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        User user = userRepository.findByEmail(codeDto.getEmail());
+        return ResponseEntity.ok(new PasswordTokenResponseDto(user.getResetPasswordToken(), 200, "Code is correct."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestBody PasswordTokenRequestDto passwordTokenRequestDto) {
+        try {
+            registrationValidator.resetPassword(passwordTokenRequestDto);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
+        }
+        return ResponseEntity.ok(new OkResponseDto(201, "Password successfully changed."));
     }
 }

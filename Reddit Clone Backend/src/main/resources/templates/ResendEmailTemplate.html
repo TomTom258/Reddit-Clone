@@ -7,8 +7,8 @@
 <body>
 <p> Hello, Dear <span th:text="${name}"></span>!</p>
 <p></p>
-<p>Please click on link below until <span th:text="${expirationTime}"></span> to get your e-mail address verified. </br>
-    <a th:href="@{'http://localhost:8080/api/email/verify?token=' + ${verificationToken}}" >Click on this link</a>
+<p>Please click on link below until <span th:text="${expirationEmailTime}"></span> to get your e-mail address verified. </br>
+    <a th:href="@{'http://localhost:8080/api/email/verify?token=' + ${emailToken}}" >Click on this link</a>
 </p>
 <p>Didn't make it ? Don't worry. Resend your e-mail verification code from your profile in our app.</p>
 <p>Your RedditClone Team</p>

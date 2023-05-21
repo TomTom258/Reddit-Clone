@@ -1,5 +1,6 @@
 package com.example.redditclone.users.services;
 
+import com.example.redditclone.dtos.PasswordTokenRequestDto;
 import com.example.redditclone.security.TotpManager;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.UserRepository;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class RegistrationValidatorImp implements RegistrationValidator {
@@ -89,5 +92,62 @@ public class RegistrationValidatorImp implements RegistrationValidator {
     @Override
     public Long retrieveUserId(String username) {
         return userRepository.findByUsername(username).getId();
+    }
+
+    @Override
+    public boolean setForgottenPasswordToken(String email) {
+        if (email.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
+        }
+
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            if (user.getVerifiedAt() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unverified email");
+            } else {
+                Integer randomNumber = (int) (Math.random() * 100000);
+                user.setForgottenPasswordToken(randomNumber.toString());
+                user.setForgottenPasswordExpiresAt(LocalDateTime.now().plusHours(1));
+                userRepository.save(user);
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exist !");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean validateResetPasswordToken(String code, String email) {
+        User user = userRepository.findByEmail(email);
+
+        LocalDateTime now = LocalDateTime.now();
+        boolean isAfter = now.isAfter(user.getForgottenPasswordExpiresAt());
+
+        if (isAfter) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token expired");
+        }
+
+        if (code.equals(user.getForgottenPasswordToken())) {
+            user.setResetPasswordToken(UUID.randomUUID().toString());
+            userRepository.save(user);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong token!");
+        }
+    }
+
+    @Override
+    public boolean resetPassword(PasswordTokenRequestDto passwordTokenRequestDto) {
+        User user = userRepository.findByResetPasswordToken(passwordTokenRequestDto.getPasswordToken());
+        boolean passwordsMatch = passwordTokenRequestDto.getNewPassword().equals(passwordTokenRequestDto.getNewPasswordCheck());
+
+        if (passwordsMatch) {
+            user.setPassword(passwordEncoder.encode(passwordTokenRequestDto.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords dont match!");
+        }
     }
 }

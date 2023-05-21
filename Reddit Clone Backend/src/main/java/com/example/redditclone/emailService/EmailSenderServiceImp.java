@@ -31,12 +31,12 @@ public class EmailSenderServiceImp implements EmailSenderService {
 
     public void sendHtmlEmail(String emailType, User user) throws MessagingException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = user.getVerificationTokenExpiresAt();
+        LocalDateTime emailTokenExpirationTime = user.getVerificationTokenExpiresAt();
 
         Context ctx = new Context();
         ctx.setVariable("name", user.getUsername());
-        ctx.setVariable("expirationTime", dateTime.format(formatter));
-        ctx.setVariable("verificationToken", user.getVerificationToken());
+        ctx.setVariable("expirationEmailTime", emailTokenExpirationTime.format(formatter));
+        ctx.setVariable("emailToken", user.getVerificationToken());
 
         jakarta.mail.internet.MimeMessage mimeMessage= this.emailSender.createMimeMessage();
         MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -52,6 +52,14 @@ public class EmailSenderServiceImp implements EmailSenderService {
         if (emailType.equals("resendVerificationEmail")) {
             message.setSubject("Resend of the verification e-mail address");
             String htmlContent = this.templateEngine.process("ResendEmailTemplate.html", ctx);
+            message.setText(htmlContent, true);
+        }
+
+        if (emailType.equals("resendPasswordEmail")) {
+            message.setSubject("Change your password");
+            ctx.setVariable("expirationPasswordTime", user.getForgottenPasswordExpiresAt().format(formatter));
+            ctx.setVariable("passwordToken", user.getForgottenPasswordToken());
+            String htmlContent = this.templateEngine.process("ResetPasswordEmailTemplate.html", ctx);
             message.setText(htmlContent, true);
         }
         this.emailSender.send(mimeMessage);
@@ -89,10 +97,21 @@ public class EmailSenderServiceImp implements EmailSenderService {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Invalid input!"));
 
+        if (user.getVerifiedAt() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already verified");
+        }
+
         user.setVerificationToken(UUID.randomUUID().toString());
         user.setVerificationTokenExpiresAt(LocalDateTime.now().plusHours(1));
         userRepository.save(user);
         sendHtmlEmail("resendVerificationEmail", user);
+        return true;
+    }
+
+    @Override
+    public boolean resetPasswordEmail(String email) throws MessagingException {
+        User user = userRepository.findByEmail(email);
+        sendHtmlEmail("resendPasswordEmail", user);
         return true;
     }
 }
