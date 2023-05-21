@@ -28,11 +28,12 @@ public class FileServiceImp implements FileService {
     public boolean handleUploadPicture(MultipartFile multipartFile, long id) {
         if (!multipartFile.isEmpty()) {
             try {
-                String uploadsDir = "/uploads/";
+                boolean deleted;
+                String uploadsDir = "/uploads/profilePictures/";
                 String realPathtoUploads = httpServletRequest.getServletContext().getRealPath(uploadsDir);
 
                 if (!new File(realPathtoUploads).exists()) {
-                    new File(realPathtoUploads).mkdir();
+                    new File(realPathtoUploads).mkdirs();
                 }
 
                 String orgName = multipartFile.getOriginalFilename();
@@ -45,6 +46,11 @@ public class FileServiceImp implements FileService {
 
                 String filePath = realPathtoUploads + newFileName;
                 User user = userRepository.getReferenceById(id);
+
+                if (!user.getProfilePictureFilePath().isEmpty()) {
+                    File oldPicture = new File(user.getProfilePictureFilePath());
+                    deleted = oldPicture.delete();
+                }
 
                 File dest = new File(filePath);
                 multipartFile.transferTo(dest);
