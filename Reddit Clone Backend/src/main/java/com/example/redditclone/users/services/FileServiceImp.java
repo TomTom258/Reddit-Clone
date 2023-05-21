@@ -26,9 +26,10 @@ public class FileServiceImp implements FileService {
 
     @Override
     public boolean handleUploadPicture(MultipartFile multipartFile, long id) {
-        if (!multipartFile.isEmpty()) {
+        boolean correctExtension = validateExtension(multipartFile);
+
+        if (!multipartFile.isEmpty() && correctExtension) {
             try {
-                boolean deleted;
                 String uploadsDir = "/uploads/profilePictures/";
                 String realPathtoUploads = httpServletRequest.getServletContext().getRealPath(uploadsDir);
 
@@ -39,17 +40,18 @@ public class FileServiceImp implements FileService {
                 String orgName = multipartFile.getOriginalFilename();
                 String extension = orgName.substring(orgName.lastIndexOf(".") + 1);
                 String newFileName = UUID.randomUUID().toString() + "." + extension;
+                String filePath = realPathtoUploads + newFileName;
 
-                while (userRepository.existsByProfilePictureFilePath(newFileName)) {
+                while (userRepository.existsByProfilePictureFilePath(filePath)) {
                     newFileName = UUID.randomUUID().toString() + "." + extension;
+                    filePath = realPathtoUploads + newFileName;
                 }
 
-                String filePath = realPathtoUploads + newFileName;
                 User user = userRepository.getReferenceById(id);
 
                 if (!user.getProfilePictureFilePath().isEmpty()) {
                     File oldPicture = new File(user.getProfilePictureFilePath());
-                    deleted = oldPicture.delete();
+                    oldPicture.delete();
                 }
 
                 File dest = new File(filePath);
@@ -63,6 +65,18 @@ public class FileServiceImp implements FileService {
             }
         } else {
             throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty! ");
+        }
+    }
+
+    @Override
+    public boolean validateExtension(MultipartFile multipartFile) {
+        String orgName = multipartFile.getOriginalFilename();
+        String extension = orgName.substring(orgName.lastIndexOf(".") + 1);
+
+        if (!"png".equals(extension) && !"jpeg".equals(extension) && !"jpg".equals(extension)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only jpg/jpeg/png formats are accepted!");
+        } else {
+            return true;
         }
     }
 }

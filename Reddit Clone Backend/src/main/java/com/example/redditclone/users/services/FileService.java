@@ -6,4 +6,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface FileService {
     boolean handleUploadPicture(MultipartFile multipartFile, long id);
+    boolean validateExtension(MultipartFile multipartFile);
 }
