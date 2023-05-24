@@ -33,6 +33,13 @@ class UserTest {
     }
 
     @Test
+    void set_new_email() {
+        User user = new User("testUsername", "test@email.com", "testPassword", false);
+        user.setEmail("newEmail@test.com");
+        assertEquals("newEmail@test.com", user.getEmail());
+    }
+
+    @Test
     void get_time_created() {
         User user = new User("testUsername", "test@email.com", "testPassword", false);
         assertEquals(LocalDateTime.now(), user.getCreatedAt());
