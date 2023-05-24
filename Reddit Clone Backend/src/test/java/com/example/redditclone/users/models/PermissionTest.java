@@ -1,35 +1,58 @@
 package com.example.redditclone.users.models;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PermissionTest {
 
-    Permission permission;
-    @BeforeEach
-    void init() {
-        permission = new Permission("Test Ability");
+    @Test
+    void testGettersAndSetters() {
+        // Arrange
+        String ability = "READ_POST";
+        Set<User> users = new HashSet<>();
+        Set<Role> roles = new HashSet<>();
+
+        // Act
+        Permission permission = new Permission();
+        permission.setAbility(ability);
+        permission.setUsers(users);
+        permission.setRoles(roles);
+
+        // Assert
+        assertEquals(null, permission.getId());
+        assertEquals(ability, permission.getAbility());
+        assertEquals(users, permission.getUsers());
+        assertEquals(roles, permission.getRoles());
     }
 
     @Test
-    void id_returns_null_if_instanciated() {
+    void testConstructor() {
+        // Arrange
+        String ability = "WRITE_POST";
+
+        // Act
+        Permission permission = new Permission(ability);
+
+        // Assert
         assertNull(permission.getId());
+        assertEquals(ability, permission.getAbility());
+        assertNotNull(permission.getUsers());
+        assertNotNull(permission.getRoles());
     }
 
     @Test
-    void getAbility_returns_correct_value() {
-        assertEquals("Test Ability", permission.getAbility());
-    }
+    void testDefaultConstructor() {
+        // Arrange & Act
+        Permission permission = new Permission();
 
-    @Test
-    void getUsers_returns_null_if_instanciated() {
-        assertEquals(0, permission.getUsers().size());
-    }
-
-    @Test
-    void getRoles_returns_null_if_instanciated() {
-        assertEquals(0, permission.getRoles().size());
+        // Assert
+        assertNull(permission.getId());
+        assertNull(permission.getAbility());
+        assertNotNull(permission.getUsers());
+        assertNotNull(permission.getRoles());
     }
 }
