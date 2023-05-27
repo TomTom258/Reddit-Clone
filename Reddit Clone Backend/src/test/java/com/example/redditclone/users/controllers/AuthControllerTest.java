@@ -1,6 +1,9 @@
 package com.example.redditclone.users.controllers;
 
 import com.example.redditclone.dtos.RegisterDto;
+import com.example.redditclone.emailService.EmailSenderService;
+import com.example.redditclone.security.JWTGenerator;
+import com.example.redditclone.security.TotpManager;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.UserRepository;
 import com.example.redditclone.users.services.RegistrationValidator;
@@ -13,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -30,6 +34,14 @@ class AuthControllerTest {
     private RegistrationValidator registrationValidator;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private AuthenticationManager authenticationManager;
+    @MockBean
+    private JWTGenerator jwtGenerator;
+    @MockBean
+    private EmailSenderService emailSenderService;
+    @MockBean
+    private TotpManager totpManager;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -46,6 +58,6 @@ class AuthControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(201)))
-                .andExpect(jsonPath("$.message", is("Registration successful")));
+                .andExpect(jsonPath("$.message", is("Registration successful.")));
     }
 }

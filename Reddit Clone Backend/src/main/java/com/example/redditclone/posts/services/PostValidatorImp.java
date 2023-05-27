@@ -40,7 +40,7 @@ public class PostValidatorImp implements PostValidator{
         boolean isTitleValid = validateTitle(post);
         boolean isContentValid = validateContent(post);
         if (isTitleValid && isContentValid) {
-            Post newPost = new Post(post.getTitle(), post.getContent(), "testOwner");
+            Post newPost = new Post(post.getTitle(), post.getContent(), post.getOwner());
             postRepository.save(newPost);
             return true;
         } else {

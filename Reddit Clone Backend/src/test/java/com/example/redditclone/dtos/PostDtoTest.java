@@ -10,7 +10,7 @@ public class PostDtoTest {
     @Test
     public void testGetTitle() {
         String expectedTitle = "Test Title";
-        PostDto postDto = new PostDto(expectedTitle, "Test Content");
+        PostDto postDto = new PostDto(expectedTitle, "Test Content", 1L);
 
         String actualTitle = postDto.getTitle();
 
@@ -20,7 +20,7 @@ public class PostDtoTest {
     @Test
     public void testGetContent() {
         String expectedContent = "Test Content";
-        PostDto postDto = new PostDto("Test Title", expectedContent);
+        PostDto postDto = new PostDto("Test Title", expectedContent, 1L);
 
         String actualContent = postDto.getContent();
 
