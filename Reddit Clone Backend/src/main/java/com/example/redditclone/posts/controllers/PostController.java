@@ -5,6 +5,8 @@ import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.repositories.PostRepository;
 import com.example.redditclone.posts.services.PostService;
 import com.example.redditclone.posts.services.PostValidator;
+import com.example.redditclone.users.models.User;
+import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +20,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-
     private PostValidator postValidator;
     private PostService postService;
     private PostRepository postRepository;
+    private UserRepository userRepository;
+
     @Autowired
-    public PostController(PostValidator postValidator, PostService postService, PostRepository postRepository) {
+    public PostController(PostValidator postValidator, PostService postService, PostRepository postRepository, UserRepository userRepository) {
         this.postValidator = postValidator;
         this.postService = postService;
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
+
     @GetMapping("get")
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> storedPosts = postRepository.findAll();
@@ -38,10 +43,12 @@ public class PostController {
 
     @PostMapping("add")
     public ResponseEntity<ResponseDto> post(@RequestBody PostDto postDto) {
+        User owner = userRepository.getReferenceById(postDto.getUserId());
+
         Post newPost = new Post(
                 postDto.getTitle(),
                 postDto.getContent(),
-                "test");
+                owner.getUsername());
         try {
             postValidator.postThePost(newPost);
         } catch (ResponseStatusException e) {
@@ -52,10 +59,12 @@ public class PostController {
 
     @PutMapping("edit/{id}")
     public ResponseEntity<ResponseDto> editPost(@PathVariable long id, @RequestBody PostDto postDto) {
+        User owner = userRepository.getReferenceById(postDto.getUserId());
+
         Post newPost = new Post(
                 postDto.getTitle(),
                 postDto.getContent(),
-                "test");
+                owner.getUsername());
         try {
             postValidator.editThePost(newPost, id);
         } catch (ResponseStatusException e) {
