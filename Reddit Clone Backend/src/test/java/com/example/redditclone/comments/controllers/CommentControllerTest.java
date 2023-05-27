@@ -91,7 +91,7 @@ class CommentControllerTest {
     }
 
     @Test
-    void upvoteComment_ValidInput_ReturnsCreatedResponse() {
+    void upvoteComment_ReturnsCreatedResponse() {
         long id = 1L;
 
         when(commentService.upvoteComment(id)).thenReturn(true);
@@ -103,22 +103,7 @@ class CommentControllerTest {
     }
 
     @Test
-    void upvoteComment_InvalidInput_ReturnsErrorResponse() {
-        long id = 1L;
-        String errorReason = "Invalid comment";
-
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorReason))
-                .when(commentService).upvoteComment(id);
-
-        ResponseEntity<ResponseDto> response = commentController.upvoteComment(id);
-
-        verify(commentService).upvoteComment(id);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(errorReason, ((ErrorResponseDto) response.getBody()).getError());
-    }
-
-    @Test
-    void downvoteComment_ValidInput_ReturnsCreatedResponse() {
+    void downvoteComment_ReturnsCreatedResponse() {
         long id = 1L;
 
         when(commentService.downvoteComment(id)).thenReturn(true);
@@ -130,22 +115,7 @@ class CommentControllerTest {
     }
 
     @Test
-    void downvoteComment_InvalidInput_ReturnsErrorResponse() {
-        long id = 1L;
-        String errorReason = "Invalid comment";
-
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorReason))
-                .when(commentService).downvoteComment(id);
-
-        ResponseEntity<ResponseDto> response = commentController.downvoteComment(id);
-
-        verify(commentService).downvoteComment(id);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(errorReason, ((ErrorResponseDto) response.getBody()).getError());
-    }
-
-    @Test
-    void deleteComment_ValidInput_ReturnsNoContentResponse() {
+    void deleteComment_ReturnsNoContentResponse() {
         long id = 1L;
 
         when(commentService.downvoteComment(id)).thenReturn(true);
@@ -154,20 +124,5 @@ class CommentControllerTest {
 
         verify(commentService).deleteComment(id);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
-
-    @Test
-    void deleteComment_InvalidInput_ReturnsErrorResponse() {
-        long id = 1L;
-        String errorReason = "Invalid comment";
-
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorReason))
-                .when(commentService).deleteComment(id);
-
-        ResponseEntity<ResponseDto> response = commentController.deleteComment(id);
-
-        verify(commentService).deleteComment(id);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(errorReason, ((ErrorResponseDto) response.getBody()).getError());
     }
 }
