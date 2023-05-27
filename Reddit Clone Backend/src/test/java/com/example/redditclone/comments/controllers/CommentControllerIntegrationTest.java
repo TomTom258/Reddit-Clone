@@ -76,7 +76,82 @@ public class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.error", is("Comment must be at least 2 characters long!")));
     }
 
+    @Test
+    void editComment_ValidInput_ReturnsOkResponse() throws Exception {
+        long commentId = 1L;
+        CommentDto commentDto = new CommentDto("This is a test comment");
 
+        when(commentValidator.editTheComment(commentDto, commentId)).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/comments/edit/{commentId}", commentId)
+                        .content(objectMapper.writeValueAsString(commentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Comment was successfully changed"));
+    }
+
+    @Test
+    void editComment_InvalidInput_ReturnsErrorResponse() throws Exception {
+        long commentId = 1L;
+        CommentDto commentDto = new CommentDto(".");
+
+        when(commentValidator.editTheComment(Mockito.any(CommentDto.class), Mockito.any(Long.class)))
+                .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment must be at least 2 characters long!"));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/comments/edit/{commentId}", commentId)
+                        .content(objectMapper.writeValueAsString(commentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").value("Comment must be at least 2 characters long!"));
+    }
+
+    @Test
+    void upvoteComment_ValidInput_ReturnsCreatedResponse() throws Exception {
+        long id = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/comments/upvote/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(201))
+                .andExpect(jsonPath("$.message").value("Comment was successfully upvoted"));
+    }
+
+    @Test
+    void downvoteComment_ValidInput_ReturnsCreatedResponse() throws Exception {
+        long id = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/comments/downvote/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(201))
+                .andExpect(jsonPath("$.message").value("Comment was successfully downvoted"));
+    }
+
+    @Test
+    void deleteComment_ValidInput_ReturnsNoContentResponse() throws Exception {
+        long id = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/comments/delete/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$.status").value(204))
+                .andExpect(jsonPath("$.message").value("Comment was successfully removed"));
+    }
 }
 
 
