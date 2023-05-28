@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ class PostControllerTest {
     }
 
     @Test
-    void getAllPosts_ReturnsSortedPosts() {
+    void getAllPosts_ReturnsSortedPosts() throws IOException {
         List<Post> storedPosts = Arrays.asList(
                 new Post("Title 1", "Content 1", "user1"),
                 new Post("Title 2", "Content 2", "user2"),

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class Post {
     @Column(name = "reputation")
     Long reputation;
 
+    String ownerProfilePicture;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Set<Comment> comments;
@@ -46,6 +49,7 @@ public class Post {
         this.owner = owner;
         this.created_at = LocalDateTime.now();
         this.reputation = 0L;
+        this.ownerProfilePicture = "";
     }
 
     public String getTitle() {
@@ -95,5 +99,13 @@ public class Post {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getOwnerProfilePicture() {
+        return ownerProfilePicture;
+    }
+
+    public void setOwnerProfilePicture(String ownerProfilePicture) {
+        this.ownerProfilePicture = ownerProfilePicture;
     }
 }

@@ -51,6 +51,9 @@ dependencies {
 	implementation 'jakarta.mail:jakarta.mail-api:2.1.1'
 	implementation 'org.eclipse.angus:angus-mail:2.0.1'
 	implementation 'dev.samstevens.totp:totp:1.7.1'
+	// https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation 'commons-io:commons-io:2.12.0'
+
 }
 
 tasks.named('test') {

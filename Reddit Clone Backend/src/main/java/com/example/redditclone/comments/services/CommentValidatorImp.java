@@ -5,11 +5,15 @@ import com.example.redditclone.comments.repositories.CommentRepository;
 import com.example.redditclone.dtos.CommentDto;
 import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.repositories.PostRepository;
+import com.example.redditclone.users.models.User;
+import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,11 +22,13 @@ public class CommentValidatorImp implements CommentValidator{
 
     PostRepository postRepository;
     CommentRepository commentRepository;
+    UserRepository userRepository;
 
     @Autowired
-    public CommentValidatorImp(PostRepository postRepository, CommentRepository commentRepository) {
+    public CommentValidatorImp(PostRepository postRepository, CommentRepository commentRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
     }
     @Override
     public boolean validateId(Long id) {
@@ -49,7 +55,8 @@ public class CommentValidatorImp implements CommentValidator{
 
         if (isIdValid && isContentValid) {
             Post commentedPost = postRepository.getReferenceById(id);
-            Comment newComment = new Comment(commentDto.getContent(), "testOwner");
+            User owner = userRepository.getReferenceById(commentDto.getUserId());
+            Comment newComment = new Comment(commentDto.getContent(), owner.getUsername());
             Set<Comment> commentsList = commentedPost.getComments();
 
             commentsList.add(newComment);

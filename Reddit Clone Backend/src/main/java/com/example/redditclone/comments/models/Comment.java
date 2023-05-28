@@ -26,6 +26,8 @@ public class Comment {
     @Column(name = "reputation")
     Long reputation;
 
+    String ownerProfilePicture;
+
     @ManyToOne
     @JoinColumn(name = "post_id", insertable = false)
     private Post post;
@@ -40,6 +42,7 @@ public class Comment {
         this.owner = owner;
         this.created_at = LocalDateTime.now();
         this.reputation = 0L;
+        this.ownerProfilePicture = "";
     }
 
     public String getContent() {
@@ -85,5 +88,13 @@ public class Comment {
 
     public Long getPostId(){
         return post.getId();
+    }
+
+    public String getOwnerProfilePicture() {
+        return ownerProfilePicture;
+    }
+
+    public void setOwnerProfilePicture(String ownerProfilePicture) {
+        this.ownerProfilePicture = ownerProfilePicture;
     }
 }
