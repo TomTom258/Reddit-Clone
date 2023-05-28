@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,8 +35,8 @@ public class PostController {
     }
 
     @GetMapping("get")
-    public ResponseEntity<List<Post>> getAllPosts() {
-        List<Post> storedPosts = postRepository.findAll();
+    public ResponseEntity<List<Post>> getAllPosts() throws IOException {
+        List<Post> storedPosts = postService.assignProfilePictures();
         storedPosts.sort(Comparator.comparing(Post::getReputation, Collections.reverseOrder()));
 
         return ResponseEntity.ok(storedPosts);

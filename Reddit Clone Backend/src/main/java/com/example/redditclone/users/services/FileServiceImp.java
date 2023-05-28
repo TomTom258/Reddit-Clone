@@ -74,7 +74,7 @@ public class FileServiceImp implements FileService {
         String extension = orgName.substring(orgName.lastIndexOf(".") + 1);
 
         if (!"png".equals(extension) && !"jpeg".equals(extension) && !"jpg".equals(extension)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only jpg/jpeg/png formats are accepted!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only .jpg/.jpeg/.png formats are accepted!");
         } else {
             return true;
         }

@@ -2,6 +2,7 @@ package com.example.redditclone.dtos;
 
 public class CommentDto {
     private String content;
+    private long userId;
 
     public CommentDto() {
     };
@@ -12,5 +13,9 @@ public class CommentDto {
 
     public String getContent() {
         return content;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 }
