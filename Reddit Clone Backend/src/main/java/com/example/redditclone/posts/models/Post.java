@@ -15,22 +15,22 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    Long id;
+    private Long id;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
     @Column(name = "content", length = 1337)
-    String content;
+    private String content;
 
     @Column(name = "created_at")
-    LocalDateTime created_at;
+    private LocalDateTime created_at;
 
     @Column(name = "owner")
-    String owner;
+    private String owner;
 
     @Column(name = "reputation")
-    Long reputation;
+    private Long reputation;
 
     String ownerProfilePicture;
 
