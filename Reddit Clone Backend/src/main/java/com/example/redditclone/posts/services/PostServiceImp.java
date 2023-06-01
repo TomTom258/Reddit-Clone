@@ -35,7 +35,7 @@ public class PostServiceImp implements PostService{
 
         Post upvotedPost = postRepository.getReferenceById(id);
         User upvotedUser = userRepository.findByUsername(upvotedPost.getOwner());
-        Set<String> usernamesWhoUpvoted = upvotedPost.getupvotedByUsernames();
+        Set<String> usernamesWhoUpvoted = upvotedPost.getUpvotedByUsernames();
 
         if (Objects.isNull(upvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
@@ -101,11 +101,20 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public List<Post> assignProfilePictures() throws IOException {
+    public List<Post> assignProfilePicturesAndUserReactions(String username) throws IOException {
         List<Post> storedPosts = postRepository.findAll();
 
         for (Post post : storedPosts) {
             User owner = userRepository.findByUsername(post.getOwner());
+
+
+            if (post.getUpvotedByUsernames().contains(username)) {
+                post.setReaction(1);
+            } else if (post.getDownvotedByUsernames().contains(username)) {
+                post.setReaction(-1);
+            } else {
+                post.setReaction(0);
+            }
 
             byte[] fileContent = FileUtils.readFileToByteArray(new File(owner.getProfilePictureFilePath()));
             String encodedProfilePicture = Base64.getEncoder().encodeToString(fileContent);
@@ -114,6 +123,14 @@ public class PostServiceImp implements PostService{
 
             for (Comment comment : commentsList) {
                 User commentOwner = userRepository.findByUsername(comment.getOwner());
+
+                if (comment.getupvotedByUsernames().contains(username)) {
+                    comment.setReaction(1);
+                } else if (comment.getDownvotedByUsernames().contains(username)) {
+                    comment.setReaction(-1);
+                } else {
+                    comment.setReaction(0);
+                }
 
                 byte[] fileContentInComment = FileUtils.readFileToByteArray(new File(commentOwner.getProfilePictureFilePath()));
                 String encodedProfilePictureInComment = Base64.getEncoder().encodeToString(fileContentInComment);

@@ -43,7 +43,7 @@ public class Post {
     @Column(name = "downvotedByUsernames")
     private Set<String> downvotedByUsernames;
 
-    private byte reaction;
+    private int reaction;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
@@ -118,12 +118,13 @@ public class Post {
 
     public void setOwnerProfilePicture(String ownerProfilePicture) {
         this.ownerProfilePicture = ownerProfilePicture;
+    }
 
-    public Set<String> getupvotedByUsernames() {
+    public Set<String> getUpvotedByUsernames() {
         return upvotedByUsernames;
     }
 
-    public void setupvotedByUsernames(Set<String> upvotedByUsernames) {
+    public void setUpvotedByUsernames(Set<String> upvotedByUsernames) {
         this.upvotedByUsernames = upvotedByUsernames;
     }
 
@@ -135,11 +136,11 @@ public class Post {
         this.downvotedByUsernames = downvotedByUsernames;
     }
 
-    public byte getReaction() {
+    public int getReaction() {
         return reaction;
     }
 
-    public void setReaction(byte reaction) {
+    public void setReaction(int reaction) {
         this.reaction = reaction;
     }
 }

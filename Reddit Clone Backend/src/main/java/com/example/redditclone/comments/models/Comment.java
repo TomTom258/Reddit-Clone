@@ -27,9 +27,8 @@ public class Comment {
     @Column(name = "reputation")
     private Long reputation;
 
-<<<<<<< HEAD
     String ownerProfilePicture;
-=======
+
     @ElementCollection
     @Column(name = "upvotedByUsernames")
     private Set<String> upvotedByUsernames;
@@ -37,7 +36,8 @@ public class Comment {
     @ElementCollection
     @Column(name = "downvotedByUsernames")
     private Set<String> downvotedByUsernames;
->>>>>>> d73eda8 (Imrpved logic, not finsihed yet)
+
+    private int reaction;
 
     @ManyToOne
     @JoinColumn(name = "post_id", insertable = false)
@@ -101,14 +101,14 @@ public class Comment {
         return post.getId();
     }
 
-<<<<<<< HEAD
     public String getOwnerProfilePicture() {
         return ownerProfilePicture;
     }
 
     public void setOwnerProfilePicture(String ownerProfilePicture) {
         this.ownerProfilePicture = ownerProfilePicture;
-=======
+    }
+
     public Set<String> getupvotedByUsernames() {
         return upvotedByUsernames;
     }
@@ -123,6 +123,13 @@ public class Comment {
 
     public void setDownvotedByUsernames(Set<String> downvotedByUsernames) {
         this.downvotedByUsernames = downvotedByUsernames;
->>>>>>> d73eda8 (Imrpved logic, not finsihed yet)
+    }
+
+    public int getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(int reaction) {
+        this.reaction = reaction;
     }
 }
