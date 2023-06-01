@@ -14,5 +14,5 @@ public interface PostService {
 
     public boolean deletePost(long id);
 
-    public List<Post> assignProfilePicturesAndUserReactions(String username) throws IOException;
+    public List<Post> mapProfilePicturesAndReactions(String username) throws IOException;
 }

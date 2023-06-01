@@ -5,6 +5,8 @@ import com.example.redditclone.comments.services.CommentValidator;
 import com.example.redditclone.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,8 +45,10 @@ public class CommentController {
 
     @PostMapping("upvote/{id}")
     public ResponseEntity<ResponseDto> upvoteComment(@PathVariable long id) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
         try {
-            commentService.upvoteComment(id);
+            commentService.upvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
@@ -53,8 +57,10 @@ public class CommentController {
 
     @PostMapping("downvote/{id}")
     public ResponseEntity<ResponseDto> downvoteComment(@PathVariable long id) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
         try {
-            commentService.downvoteComment(id);
+            commentService.downvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }

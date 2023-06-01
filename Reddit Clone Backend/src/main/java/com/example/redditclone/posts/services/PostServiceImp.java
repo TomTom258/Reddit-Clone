@@ -36,6 +36,7 @@ public class PostServiceImp implements PostService{
         Post upvotedPost = postRepository.getReferenceById(id);
         User upvotedUser = userRepository.findByUsername(upvotedPost.getOwner());
         Set<String> usernamesWhoUpvoted = upvotedPost.getUpvotedByUsernames();
+        Set<String> usernamesWhoDownvoted = upvotedPost.getDownvotedByUsernames();
 
         if (Objects.isNull(upvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
@@ -44,6 +45,11 @@ public class PostServiceImp implements PostService{
                 usernamesWhoUpvoted.remove(upvotedByUsername);
                 upvotedPost.setReputation(upvotedPost.getReputation() - 1);
                 upvotedUser.setKarma(upvotedUser.getKarma() - 1);
+            } else if (usernamesWhoDownvoted.contains(upvotedByUsername)) {
+                usernamesWhoDownvoted.remove(upvotedByUsername);
+                usernamesWhoUpvoted.add(upvotedByUsername);
+                upvotedPost.setReputation(upvotedPost.getReputation() + 2);
+                upvotedUser.setKarma(upvotedUser.getKarma() + 2);
             } else {
                 usernamesWhoUpvoted.add(upvotedByUsername);
                 upvotedPost.setReputation(upvotedPost.getReputation() + 1);
@@ -64,6 +70,7 @@ public class PostServiceImp implements PostService{
         Post downvotedPost = postRepository.getReferenceById(id);
         User downvotedUser = userRepository.findByUsername(downvotedPost.getOwner());
         Set<String> usernamesWhoDownvoted = downvotedPost.getDownvotedByUsernames();
+        Set<String> usernamesWhoUpvoted = downvotedPost.getUpvotedByUsernames();
 
         if (Objects.isNull(downvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
@@ -72,6 +79,11 @@ public class PostServiceImp implements PostService{
                 usernamesWhoDownvoted.remove(downvotedByUsername);
                 downvotedPost.setReputation(downvotedPost.getReputation() + 1);
                 downvotedUser.setKarma(downvotedUser.getKarma() + 1);
+            } else if (usernamesWhoUpvoted.contains(downvotedByUsername)) {
+                usernamesWhoUpvoted.remove(downvotedByUsername);
+                usernamesWhoDownvoted.add(downvotedByUsername);
+                downvotedPost.setReputation(downvotedPost.getReputation() - 2);
+                downvotedUser.setKarma(downvotedUser.getKarma() - 2);
             } else {
                 usernamesWhoDownvoted.add(downvotedByUsername);
                 downvotedPost.setReputation(downvotedPost.getReputation() - 1);
@@ -101,7 +113,7 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public List<Post> assignProfilePicturesAndUserReactions(String username) throws IOException {
+    public List<Post> mapProfilePicturesAndReactions(String username) throws IOException {
         List<Post> storedPosts = postRepository.findAll();
 
         for (Post post : storedPosts) {
@@ -124,7 +136,7 @@ public class PostServiceImp implements PostService{
             for (Comment comment : commentsList) {
                 User commentOwner = userRepository.findByUsername(comment.getOwner());
 
-                if (comment.getupvotedByUsernames().contains(username)) {
+                if (comment.getUpvotedByUsernames().contains(username)) {
                     comment.setReaction(1);
                 } else if (comment.getDownvotedByUsernames().contains(username)) {
                     comment.setReaction(-1);

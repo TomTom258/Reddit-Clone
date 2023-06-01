@@ -38,7 +38,7 @@ public class PostController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
 
-        List<Post> storedPosts = postService.assignProfilePicturesAndUserReactions(username);
+        List<Post> storedPosts = postService.mapProfilePicturesAndReactions(username);
         storedPosts.sort(Comparator.comparing(Post::getReputation, Collections.reverseOrder()));
 
         return ResponseEntity.ok(storedPosts);

@@ -109,11 +109,11 @@ public class Comment {
         this.ownerProfilePicture = ownerProfilePicture;
     }
 
-    public Set<String> getupvotedByUsernames() {
+    public Set<String> getUpvotedByUsernames() {
         return upvotedByUsernames;
     }
 
-    public void setupvotedByUsernames(Set<String> upvotedByUsernames) {
+    public void setUpvotedByUsernames(Set<String> upvotedByUsernames) {
         this.upvotedByUsernames = upvotedByUsernames;
     }
 
