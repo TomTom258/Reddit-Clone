@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class PostServiceImp implements PostService{
@@ -27,19 +28,27 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public boolean upvotePost(long id) {
+    public boolean upvotePost(long id, String upvotedByUsername) {
         if (!postRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post doesn't exists!");
         }
 
         Post upvotedPost = postRepository.getReferenceById(id);
         User upvotedUser = userRepository.findByUsername(upvotedPost.getOwner());
+        Set<String> usernamesWhoUpvoted = upvotedPost.getupvotedByUsernames();
 
         if (Objects.isNull(upvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
         } else {
-            upvotedPost.setReputation(upvotedPost.getReputation() + 1);
-            upvotedUser.setKarma(upvotedUser.getKarma() + 1);
+            if (usernamesWhoUpvoted.contains(upvotedByUsername)) {
+                usernamesWhoUpvoted.remove(upvotedByUsername);
+                upvotedPost.setReputation(upvotedPost.getReputation() - 1);
+                upvotedUser.setKarma(upvotedUser.getKarma() - 1);
+            } else {
+                usernamesWhoUpvoted.add(upvotedByUsername);
+                upvotedPost.setReputation(upvotedPost.getReputation() + 1);
+                upvotedUser.setKarma(upvotedUser.getKarma() + 1);
+            }
             postRepository.save(upvotedPost);
             userRepository.save(upvotedUser);
             return true;
@@ -47,19 +56,27 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public boolean downvotePost(long id) {
+    public boolean downvotePost(long id, String downvotedByUsername) {
         if (!postRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post doesn't exists!");
         }
 
         Post downvotedPost = postRepository.getReferenceById(id);
         User downvotedUser = userRepository.findByUsername(downvotedPost.getOwner());
+        Set<String> usernamesWhoDownvoted = downvotedPost.getDownvotedByUsernames();
 
         if (Objects.isNull(downvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
         } else {
-            downvotedPost.setReputation(downvotedPost.getReputation() - 1);
-            downvotedUser.setKarma(downvotedUser.getKarma() - 1);
+            if (usernamesWhoDownvoted.contains(downvotedByUsername)) {
+                usernamesWhoDownvoted.remove(downvotedByUsername);
+                downvotedPost.setReputation(downvotedPost.getReputation() + 1);
+                downvotedUser.setKarma(downvotedUser.getKarma() + 1);
+            } else {
+                usernamesWhoDownvoted.add(downvotedByUsername);
+                downvotedPost.setReputation(downvotedPost.getReputation() - 1);
+                downvotedUser.setKarma(downvotedUser.getKarma() - 1);
+            }
             postRepository.save(downvotedPost);
             userRepository.save(downvotedUser);
             return true;

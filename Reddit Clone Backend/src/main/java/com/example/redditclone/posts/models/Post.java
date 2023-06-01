@@ -1,6 +1,7 @@
 package com.example.redditclone.posts.models;
 
 import com.example.redditclone.comments.models.Comment;
+import com.example.redditclone.users.models.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -33,6 +34,16 @@ public class Post {
     private Long reputation;
 
     String ownerProfilePicture;
+
+    @ElementCollection
+    @Column(name = "upvotedByUsernames")
+    private Set<String> upvotedByUsernames;
+
+    @ElementCollection
+    @Column(name = "downvotedByUsernames")
+    private Set<String> downvotedByUsernames;
+
+    private byte reaction;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
@@ -107,5 +118,28 @@ public class Post {
 
     public void setOwnerProfilePicture(String ownerProfilePicture) {
         this.ownerProfilePicture = ownerProfilePicture;
+
+    public Set<String> getupvotedByUsernames() {
+        return upvotedByUsernames;
+    }
+
+    public void setupvotedByUsernames(Set<String> upvotedByUsernames) {
+        this.upvotedByUsernames = upvotedByUsernames;
+    }
+
+    public Set<String> getDownvotedByUsernames() {
+        return downvotedByUsernames;
+    }
+
+    public void setDownvotedByUsernames(Set<String> downvotedByUsernames) {
+        this.downvotedByUsernames = downvotedByUsernames;
+    }
+
+    public byte getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(byte reaction) {
+        this.reaction = reaction;
     }
 }

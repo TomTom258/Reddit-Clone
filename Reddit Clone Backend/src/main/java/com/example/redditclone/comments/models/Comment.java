@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity(name = "comment")
 @Table(name = "Comments")
@@ -26,7 +27,17 @@ public class Comment {
     @Column(name = "reputation")
     private Long reputation;
 
+<<<<<<< HEAD
     String ownerProfilePicture;
+=======
+    @ElementCollection
+    @Column(name = "upvotedByUsernames")
+    private Set<String> upvotedByUsernames;
+
+    @ElementCollection
+    @Column(name = "downvotedByUsernames")
+    private Set<String> downvotedByUsernames;
+>>>>>>> d73eda8 (Imrpved logic, not finsihed yet)
 
     @ManyToOne
     @JoinColumn(name = "post_id", insertable = false)
@@ -90,11 +101,28 @@ public class Comment {
         return post.getId();
     }
 
+<<<<<<< HEAD
     public String getOwnerProfilePicture() {
         return ownerProfilePicture;
     }
 
     public void setOwnerProfilePicture(String ownerProfilePicture) {
         this.ownerProfilePicture = ownerProfilePicture;
+=======
+    public Set<String> getupvotedByUsernames() {
+        return upvotedByUsernames;
+    }
+
+    public void setupvotedByUsernames(Set<String> upvotedByUsernames) {
+        this.upvotedByUsernames = upvotedByUsernames;
+    }
+
+    public Set<String> getDownvotedByUsernames() {
+        return downvotedByUsernames;
+    }
+
+    public void setDownvotedByUsernames(Set<String> downvotedByUsernames) {
+        this.downvotedByUsernames = downvotedByUsernames;
+>>>>>>> d73eda8 (Imrpved logic, not finsihed yet)
     }
 }
