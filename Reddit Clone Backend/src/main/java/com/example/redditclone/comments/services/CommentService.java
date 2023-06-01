@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface CommentService {
-    public boolean upvoteComment(long id);
+    public boolean upvoteComment(long id, String upvotedByUsername);
 
-    public boolean downvoteComment(long id);
+    public boolean downvoteComment(long id, String downvotedByUsername);
 
     public boolean deleteComment(long id);
 }

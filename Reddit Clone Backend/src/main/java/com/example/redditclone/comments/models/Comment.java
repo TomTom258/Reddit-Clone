@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity(name = "comment")
 @Table(name = "Comments")
@@ -12,21 +13,31 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    Long id;
+    private Long id;
 
     @Column(name = "content", length = 1337)
-    String content;
+    private String content;
 
     @Column(name = "created_at")
-    LocalDateTime created_at;
+    private LocalDateTime created_at;
 
     @Column(name = "owner")
-    String owner;
+    private String owner;
 
     @Column(name = "reputation")
-    Long reputation;
+    private Long reputation;
 
     String ownerProfilePicture;
+
+    @ElementCollection
+    @Column(name = "upvotedByUsernames")
+    private Set<String> upvotedByUsernames;
+
+    @ElementCollection
+    @Column(name = "downvotedByUsernames")
+    private Set<String> downvotedByUsernames;
+
+    private int reaction;
 
     @ManyToOne
     @JoinColumn(name = "post_id", insertable = false)
@@ -96,5 +107,29 @@ public class Comment {
 
     public void setOwnerProfilePicture(String ownerProfilePicture) {
         this.ownerProfilePicture = ownerProfilePicture;
+    }
+
+    public Set<String> getUpvotedByUsernames() {
+        return upvotedByUsernames;
+    }
+
+    public void setUpvotedByUsernames(Set<String> upvotedByUsernames) {
+        this.upvotedByUsernames = upvotedByUsernames;
+    }
+
+    public Set<String> getDownvotedByUsernames() {
+        return downvotedByUsernames;
+    }
+
+    public void setDownvotedByUsernames(Set<String> downvotedByUsernames) {
+        this.downvotedByUsernames = downvotedByUsernames;
+    }
+
+    public int getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(int reaction) {
+        this.reaction = reaction;
     }
 }
