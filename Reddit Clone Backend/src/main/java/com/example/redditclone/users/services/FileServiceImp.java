@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -27,6 +28,11 @@ public class FileServiceImp implements FileService {
     @Override
     public boolean handleUploadPicture(MultipartFile multipartFile, long id) {
         boolean correctExtension = validateExtension(multipartFile);
+        User user = userRepository.getReferenceById(id);
+
+        if (Objects.isNull(user.getVerifiedAt())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have email validated first!");
+        }
 
         if (!multipartFile.isEmpty() && correctExtension) {
             try {
@@ -46,8 +52,6 @@ public class FileServiceImp implements FileService {
                     newFileName = UUID.randomUUID().toString() + "." + extension;
                     filePath = realPathtoUploads + newFileName;
                 }
-
-                User user = userRepository.getReferenceById(id);
 
                 if (!user.getProfilePictureFilePath().isEmpty()) {
                     File oldPicture = new File(user.getProfilePictureFilePath());
