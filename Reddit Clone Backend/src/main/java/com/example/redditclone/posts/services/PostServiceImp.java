@@ -27,6 +27,15 @@ public class PostServiceImp implements PostService{
         this.userRepository = userRepository;
     }
 
+    private boolean checkEmailVerifiedAt(Long id, String username) {
+        User user = userRepository.findByUsername(username);
+
+        if (Objects.isNull(user.getVerifiedAt())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have email validated first!");
+        }
+        return true;
+    }
+
     @Override
     public boolean upvotePost(long id, String upvotedByUsername) {
         if (!postRepository.existsById(id)) {
@@ -40,7 +49,9 @@ public class PostServiceImp implements PostService{
 
         if (Objects.isNull(upvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
+        }
+
+        if (checkEmailVerifiedAt(id, upvotedByUsername)) {
             if (usernamesWhoUpvoted.contains(upvotedByUsername)) {
                 usernamesWhoUpvoted.remove(upvotedByUsername);
                 upvotedPost.setReputation(upvotedPost.getReputation() - 1);
@@ -57,8 +68,8 @@ public class PostServiceImp implements PostService{
             }
             postRepository.save(upvotedPost);
             userRepository.save(upvotedUser);
-            return true;
         }
+        return true;
     }
 
     @Override
@@ -74,7 +85,9 @@ public class PostServiceImp implements PostService{
 
         if (Objects.isNull(downvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
+        }
+
+        if (checkEmailVerifiedAt(id, downvotedByUsername)) {
             if (usernamesWhoDownvoted.contains(downvotedByUsername)) {
                 usernamesWhoDownvoted.remove(downvotedByUsername);
                 downvotedPost.setReputation(downvotedPost.getReputation() + 1);
@@ -91,8 +104,8 @@ public class PostServiceImp implements PostService{
             }
             postRepository.save(downvotedPost);
             userRepository.save(downvotedUser);
-            return true;
         }
+        return true;
     }
 
     @Override
