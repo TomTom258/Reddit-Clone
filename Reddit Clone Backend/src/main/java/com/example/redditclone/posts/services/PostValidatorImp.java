@@ -13,10 +13,12 @@ import java.time.LocalDateTime;
 public class PostValidatorImp implements PostValidator{
 
     private PostRepository postRepository;
+    private PostService postService;
 
     @Autowired
-    public PostValidatorImp(PostRepository postRepository) {
+    public PostValidatorImp(PostRepository postRepository, PostService postService) {
         this.postRepository = postRepository;
+        this.postService = postService;
     }
 
     @Override
@@ -39,7 +41,9 @@ public class PostValidatorImp implements PostValidator{
     public boolean postThePost(Post post) {
         boolean isTitleValid = validateTitle(post);
         boolean isContentValid = validateContent(post);
-        if (isTitleValid && isContentValid) {
+        boolean isUserVerified = postService.checkEmailVerifiedAt(post.getOwner());
+
+        if (isTitleValid && isContentValid && isUserVerified) {
             Post newPost = new Post(post.getTitle(), post.getContent(), post.getOwner());
             postRepository.save(newPost);
             return true;
@@ -52,7 +56,9 @@ public class PostValidatorImp implements PostValidator{
     public boolean editThePost(Post post, Long id) {
         boolean isTitleValid = validateTitle(post);
         boolean isContentValid = validateContent(post);
-        if (isTitleValid && isContentValid) {
+        boolean isUserVerified = postService.checkEmailVerifiedAt(post.getOwner());
+
+        if (isTitleValid && isContentValid && isUserVerified) {
             Post oldPost = postRepository.getReferenceById(id);
             oldPost.setTitle(post.getTitle());
             oldPost.setContent(post.getContent());

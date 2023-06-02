@@ -27,7 +27,8 @@ public class PostServiceImp implements PostService{
         this.userRepository = userRepository;
     }
 
-    private boolean checkEmailVerifiedAt(Long id, String username) {
+    @Override
+    public boolean checkEmailVerifiedAt(String username) {
         User user = userRepository.findByUsername(username);
 
         if (Objects.isNull(user.getVerifiedAt())) {
@@ -51,7 +52,7 @@ public class PostServiceImp implements PostService{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
         }
 
-        if (checkEmailVerifiedAt(id, upvotedByUsername)) {
+        if (checkEmailVerifiedAt(upvotedByUsername)) {
             if (usernamesWhoUpvoted.contains(upvotedByUsername)) {
                 usernamesWhoUpvoted.remove(upvotedByUsername);
                 upvotedPost.setReputation(upvotedPost.getReputation() - 1);
@@ -87,7 +88,7 @@ public class PostServiceImp implements PostService{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
         }
 
-        if (checkEmailVerifiedAt(id, downvotedByUsername)) {
+        if (checkEmailVerifiedAt(downvotedByUsername)) {
             if (usernamesWhoDownvoted.contains(downvotedByUsername)) {
                 usernamesWhoDownvoted.remove(downvotedByUsername);
                 downvotedPost.setReputation(downvotedPost.getReputation() + 1);
