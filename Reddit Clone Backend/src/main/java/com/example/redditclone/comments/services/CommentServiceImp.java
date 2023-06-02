@@ -29,6 +29,17 @@ public class CommentServiceImp implements CommentService {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
     }
+
+    @Override
+    public boolean checkEmailVerifiedAt(String username) {
+        User user = userRepository.findByUsername(username);
+
+        if (Objects.isNull(user.getVerifiedAt())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have email validated first!");
+        }
+        return true;
+    }
+
     @Override
     public boolean upvoteComment(long id, String upvotedByUsername) {
         if (!commentRepository.existsById(id)) {
@@ -42,7 +53,9 @@ public class CommentServiceImp implements CommentService {
 
         if (Objects.isNull(upvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
+        }
+
+        if (checkEmailVerifiedAt(upvotedByUsername)) {
             if (usernamesWhoUpvoted.contains(upvotedByUsername)) {
                 usernamesWhoUpvoted.remove(upvotedByUsername);
                 upvotedComment.setReputation(upvotedComment.getReputation() - 1);
@@ -59,8 +72,8 @@ public class CommentServiceImp implements CommentService {
             }
             commentRepository.save(upvotedComment);
             userRepository.save(upvotedUser);
-            return true;
         }
+        return true;
     }
 
     @Override
@@ -76,7 +89,9 @@ public class CommentServiceImp implements CommentService {
 
         if (Objects.isNull(downvotedUser)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
+        }
+
+        if (checkEmailVerifiedAt(downvotedByUsername)) {
             if (usernamesWhoDownvoted.contains(downvotedByUsername)) {
                 usernamesWhoDownvoted.remove(downvotedByUsername);
                 downvotedComment.setReputation(downvotedComment.getReputation() + 1);
@@ -93,8 +108,8 @@ public class CommentServiceImp implements CommentService {
             }
             commentRepository.save(downvotedComment);
             userRepository.save(downvotedUser);
-            return true;
         }
+        return true;
     }
 
 
