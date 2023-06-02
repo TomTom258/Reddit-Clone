@@ -11,6 +11,6 @@ public interface PostValidator {
 
     public boolean postThePost(Post post);
 
-    public boolean editThePost(Post post, Long id);
+    public boolean editThePost(Post post, Long postId);
 
 }

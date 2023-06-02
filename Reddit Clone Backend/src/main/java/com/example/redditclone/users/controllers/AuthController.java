@@ -50,13 +50,13 @@ public class AuthController {
                 registerDto.isMfa());
         try {
             registrationValidator.registerUser(newUser);
-            User findUser = userRepository.findByUsername(newUser.getUsername());
-            emailSenderService.sendHtmlEmail("verificationEmail", findUser);
+            //User findUser = userRepository.findByUsername(newUser.getUsername());
+            //emailSenderService.sendHtmlEmail("verificationEmail", findUser);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        } //catch (MessagingException e) {
+            //throw new RuntimeException(e);
+        //}
         return new ResponseEntity<>(new OkResponseDto(201, "Registration successful."), HttpStatus.CREATED);
     }
 

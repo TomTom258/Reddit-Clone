@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 public interface RegistrationValidator {
     public boolean validateUsername(User user);
 
-    public boolean validatePassword(User user);
-
     public boolean validateEmail(User user);
 
     public boolean registerUser(User user);

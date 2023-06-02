@@ -13,6 +13,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class RegistrationValidatorImp implements RegistrationValidator {
@@ -40,16 +42,10 @@ public class RegistrationValidatorImp implements RegistrationValidator {
         return true;
     }
 
-    @Override
-    public boolean validatePassword(User user) {
-        String newPassword = user.getPassword();
-        if (newPassword.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is required");
-        }
-        if (newPassword.length() < 8) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long");
-        }
-        return true;
+    private static boolean isValidPassword(String password,String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
 
     @Override
@@ -76,8 +72,14 @@ public class RegistrationValidatorImp implements RegistrationValidator {
     public boolean registerUser(User user) {
         boolean isEmailValid = validateEmail(user);
         boolean isUsernameValid = validateUsername(user);
-        boolean isPasswordValid = validatePassword(user);
-        if (isEmailValid && isUsernameValid && isPasswordValid) {
+        boolean isPasswordValid = isValidPassword(user.getPassword(), "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$");
+
+        if (!isPasswordValid) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must have at least one lower case," +
+                    "one upper case and one number character and be between 8 - 20 characters long!");
+        }
+
+        if (isEmailValid && isUsernameValid) {
             User newUser = new User(user.getUsername(), user.getEmail(), passwordEncoder.encode(user.getPassword()), user.isMfa());
             if (newUser.isMfa()) {
                 newUser.setSecret(totpManager.generateSecret());
