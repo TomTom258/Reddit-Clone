@@ -3,6 +3,7 @@ package com.example.redditclone.users.services;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,7 @@ public class FileServiceImp implements FileService {
 
                 File dest = new File(filePath);
                 multipartFile.transferTo(dest);
+                Thumbnails.of(filePath).scale(0.4).outputQuality(0.5).toFile(filePath);
 
                 user.setProfilePictureFilePath(filePath);
                 userRepository.save(user);
