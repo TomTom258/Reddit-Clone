@@ -28,14 +28,15 @@ public class FileServiceImp implements FileService {
 
     @Override
     public boolean handleUploadPicture(MultipartFile multipartFile, long id) {
-        boolean correctExtension = validateExtension(multipartFile);
+        String fileName = multipartFile.getOriginalFilename();
+        String mimeType = httpServletRequest.getServletContext().getMimeType(fileName);
         User user = userRepository.getReferenceById(id);
 
         if (Objects.isNull(user.getVerifiedAt())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have email validated first!");
         }
 
-        if (!multipartFile.isEmpty() && correctExtension) {
+        if (!multipartFile.isEmpty() && mimeType.startsWith("image/")) {
             try {
                 String uploadsDir = "/uploads/profilePictures/";
                 String realPathtoUploads = httpServletRequest.getServletContext().getRealPath(uploadsDir);
@@ -71,18 +72,6 @@ public class FileServiceImp implements FileService {
             }
         } else {
             throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty! ");
-        }
-    }
-
-    @Override
-    public boolean validateExtension(MultipartFile multipartFile) {
-        String orgName = multipartFile.getOriginalFilename();
-        String extension = orgName.substring(orgName.lastIndexOf(".") + 1);
-
-        if (!"png".equals(extension) && !"jpeg".equals(extension) && !"jpg".equals(extension)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only .jpg/.jpeg/.png formats are accepted!");
-        } else {
-            return true;
         }
     }
 }
