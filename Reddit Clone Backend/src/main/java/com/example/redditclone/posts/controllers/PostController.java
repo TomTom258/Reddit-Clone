@@ -33,6 +33,11 @@ public class PostController {
         this.userRepository = userRepository;
     }
 
+    private String retrieveUsernameFromToken() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUsername();
+    }
+
     @GetMapping("get")
     public ResponseEntity<List<Post>> getAllPosts() throws IOException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

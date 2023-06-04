@@ -50,8 +50,8 @@ public class CommentController {
 
     @PostMapping("upvote/{id}")
     public ResponseEntity<ResponseDto> upvoteComment(@PathVariable long id) {
-        String username = retrieveUsernameFromToken();
         try {
+            String username = retrieveUsernameFromToken();
             commentService.upvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -61,8 +61,8 @@ public class CommentController {
 
     @PostMapping("downvote/{id}")
     public ResponseEntity<ResponseDto> downvoteComment(@PathVariable long id) {
-        String username = retrieveUsernameFromToken();
         try {
+            String username = retrieveUsernameFromToken();
             commentService.downvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -72,8 +72,8 @@ public class CommentController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseDto> deleteComment(@PathVariable long id) {
-        String username = retrieveUsernameFromToken();
         try {
+            String username = retrieveUsernameFromToken();
             commentService.deleteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
