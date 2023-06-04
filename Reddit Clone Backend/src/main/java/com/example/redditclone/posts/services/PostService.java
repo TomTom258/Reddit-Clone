@@ -12,7 +12,7 @@ public interface PostService {
 
     public boolean downvotePost(long id, String downvotedByUsername);
 
-    public boolean deletePost(long id);
+    public boolean deletePost(long id, String username);
 
     public List<Post> mapProfilePicturesAndReactions(String username) throws IOException;
 }

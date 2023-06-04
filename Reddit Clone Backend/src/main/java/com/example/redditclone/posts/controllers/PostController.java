@@ -2,7 +2,6 @@ package com.example.redditclone.posts.controllers;
 
 import com.example.redditclone.dtos.*;
 import com.example.redditclone.posts.models.Post;
-import com.example.redditclone.posts.repositories.PostRepository;
 import com.example.redditclone.posts.services.PostService;
 import com.example.redditclone.posts.services.PostValidator;
 import com.example.redditclone.users.models.User;
@@ -40,8 +39,7 @@ public class PostController {
 
     @GetMapping("get")
     public ResponseEntity<List<Post>> getAllPosts() throws IOException {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
+        String username = retrieveUsernameFromToken();
 
         List<Post> storedPosts = postService.mapProfilePicturesAndReactions(username);
         storedPosts.sort(Comparator.comparing(Post::getReputation, Collections.reverseOrder()));
@@ -51,12 +49,12 @@ public class PostController {
 
     @PostMapping("add")
     public ResponseEntity<ResponseDto> post(@RequestBody PostDto postDto) {
-        User owner = userRepository.getReferenceById(postDto.getUserId());
+        String username = retrieveUsernameFromToken();
 
         Post newPost = new Post(
                 postDto.getTitle(),
                 postDto.getContent(),
-                owner.getUsername());
+                username);
         try {
             postValidator.postThePost(newPost);
         } catch (ResponseStatusException e) {
@@ -67,14 +65,14 @@ public class PostController {
 
     @PutMapping("edit/{id}")
     public ResponseEntity<ResponseDto> editPost(@PathVariable long id, @RequestBody PostDto postDto) {
-        User owner = userRepository.getReferenceById(postDto.getUserId());
+        String username = retrieveUsernameFromToken();
 
         Post newPost = new Post(
                 postDto.getTitle(),
                 postDto.getContent(),
-                owner.getUsername());
+                username);
         try {
-            postValidator.editThePost(newPost, id);
+            postValidator.editThePost(newPost, id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
@@ -83,9 +81,8 @@ public class PostController {
 
     @PostMapping("upvote/{id}")
     public ResponseEntity<ResponseDto> upvotePost(@PathVariable long id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
         try {
+            String username = retrieveUsernameFromToken();
             postService.upvotePost(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -95,9 +92,8 @@ public class PostController {
 
     @PostMapping("downvote/{id}")
     public ResponseEntity<ResponseDto> downvotePost(@PathVariable long id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
         try {
+            String username = retrieveUsernameFromToken();
             postService.downvotePost(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -108,7 +104,8 @@ public class PostController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable long id) {
         try {
-            postService.deletePost(id);
+            String username = retrieveUsernameFromToken();
+            postService.deletePost(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }

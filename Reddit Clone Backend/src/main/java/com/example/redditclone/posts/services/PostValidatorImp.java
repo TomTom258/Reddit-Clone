@@ -53,17 +53,21 @@ public class PostValidatorImp implements PostValidator{
     }
 
     @Override
-    public boolean editThePost(Post post, Long id) {
+    public boolean editThePost(Post post, Long id, String username) {
         boolean isTitleValid = validateTitle(post);
         boolean isContentValid = validateContent(post);
         boolean isUserVerified = postService.checkEmailVerifiedAt(post.getOwner());
+        Post currentPost = postRepository.getReferenceById(id);
+
+        if (!currentPost.getOwner().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the Post!");
+        }
 
         if (isTitleValid && isContentValid && isUserVerified) {
-            Post oldPost = postRepository.getReferenceById(id);
-            oldPost.setTitle(post.getTitle());
-            oldPost.setContent(post.getContent());
-            oldPost.setCreated_at(LocalDateTime.now());
-            postRepository.save(oldPost);
+            currentPost.setTitle(post.getTitle());
+            currentPost.setContent(post.getContent());
+            currentPost.setCreated_at(LocalDateTime.now());
+            postRepository.save(currentPost);
             return true;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error");
