@@ -5,15 +5,12 @@ public class PostDto {
 
     private String content;
 
-    private long userId;
-
     public PostDto() {
     };
 
-    public PostDto(String title, String content, long userId) {
+    public PostDto(String title, String content) {
         this.title = title;
         this.content = content;
-        this.userId = userId;
     }
 
     public String getTitle() {
@@ -22,9 +19,5 @@ public class PostDto {
 
     public String getContent() {
         return content;
-    }
-
-    public long getUserId() {
-        return userId;
     }
 }

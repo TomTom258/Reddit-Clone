@@ -110,20 +110,20 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public boolean deletePost(long id) {
+    public boolean deletePost(long id, String username) {
         if (!postRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post doesn't exists!");
         }
 
         Post deletedPost = postRepository.getReferenceById(id);
-        User user = userRepository.findByUsername(deletedPost.getOwner());
+        User user = userRepository.findByUsername(username);
 
-        if (Objects.isNull(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
-            postRepository.delete(deletedPost);
-            return true;
+        if (!deletedPost.getOwner().equals(user.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the Post!");
         }
+
+        postRepository.delete(deletedPost);
+        return true;
     }
 
     @Override

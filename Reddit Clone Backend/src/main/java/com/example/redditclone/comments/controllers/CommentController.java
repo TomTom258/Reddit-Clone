@@ -21,10 +21,16 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    private String retrieveUsernameFromToken() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUsername();
+    }
+
     @PostMapping("add/{id}")
     public ResponseEntity<ResponseDto> addComment(@PathVariable long id, @RequestBody CommentDto commentDto) {
         try {
-            commentValidator.addComment(commentDto, id);
+            String username = retrieveUsernameFromToken();
+            commentValidator.addComment(commentDto, id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
@@ -34,7 +40,8 @@ public class CommentController {
     @PutMapping("edit/{commentId}")
     public ResponseEntity<ResponseDto> editComment(@PathVariable long commentId, @RequestBody CommentDto commentDto) {
         try {
-            commentValidator.editTheComment(commentDto, commentId);
+            String username = retrieveUsernameFromToken();
+            commentValidator.editTheComment(commentDto, commentId, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }
@@ -43,9 +50,8 @@ public class CommentController {
 
     @PostMapping("upvote/{id}")
     public ResponseEntity<ResponseDto> upvoteComment(@PathVariable long id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
         try {
+            String username = retrieveUsernameFromToken();
             commentService.upvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -55,9 +61,8 @@ public class CommentController {
 
     @PostMapping("downvote/{id}")
     public ResponseEntity<ResponseDto> downvoteComment(@PathVariable long id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
         try {
+            String username = retrieveUsernameFromToken();
             commentService.downvoteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
@@ -68,7 +73,8 @@ public class CommentController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseDto> deleteComment(@PathVariable long id) {
         try {
-            commentService.deleteComment(id);
+            String username = retrieveUsernameFromToken();
+            commentService.deleteComment(id, username);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponseDto(e.getReason()));
         }

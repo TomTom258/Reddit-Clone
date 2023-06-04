@@ -112,26 +112,26 @@ public class CommentServiceImp implements CommentService {
 
 
     @Override
-    public boolean deleteComment(long id) {
+    public boolean deleteComment(long id, String username) {
         if (!commentRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post doesn't exists!");
         }
 
         Comment deletedComment = commentRepository.getReferenceById(id);
-        User user = userRepository.findByUsername(deletedComment.getOwner());
+        User owner = userRepository.findByUsername(deletedComment.getOwner());
 
-        if (Objects.isNull(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
-        } else {
-            Long postId = commentRepository.getReferenceById(id).getPostId();
-            Post editedPost = postRepository.getReferenceById(postId);
-            Set<Comment> commentsList = editedPost.getComments();
-
-            commentsList.remove(deletedComment);
-            commentRepository.delete(deletedComment);
-            editedPost.setComments(commentsList);
-            postRepository.save(editedPost);
-            return true;
+        if (!username.equals(owner.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the comment!");
         }
+
+        Long postId = commentRepository.getReferenceById(id).getPostId();
+        Post editedPost = postRepository.getReferenceById(postId);
+        Set<Comment> commentsList = editedPost.getComments();
+
+        commentsList.remove(deletedComment);
+        commentRepository.delete(deletedComment);
+        editedPost.setComments(commentsList);
+        postRepository.save(editedPost);
+        return true;
     }
 }
