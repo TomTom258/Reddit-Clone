@@ -50,6 +50,8 @@ public class AuthController {
                 registerDto.isMfa());
         try {
             registrationValidator.registerUser(newUser);
+            //sending emails currently turned off - because of Mailtrap's limitations
+
             //User findUser = userRepository.findByUsername(newUser.getUsername());
             //emailSenderService.sendHtmlEmail("verificationEmail", findUser);
         } catch (ResponseStatusException e) {

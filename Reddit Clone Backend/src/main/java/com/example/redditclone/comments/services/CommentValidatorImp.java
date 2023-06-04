@@ -49,14 +49,14 @@ public class CommentValidatorImp implements CommentValidator{
     }
 
     @Override
-    public boolean addComment(CommentDto commentDto, long id) {
-        boolean isIdValid = validateId(id);
+    public boolean addComment(CommentDto commentDto, long postId, String username) {
+        boolean isIdValid = validateId(postId);
         boolean isContentValid = validateContent(commentDto.getContent());
-        User owner = userRepository.getReferenceById(commentDto.getUserId());
+        User owner = userRepository.findByUsername(username);
         boolean isUserValid = commentService.checkEmailVerifiedAt(owner.getUsername());
 
         if (isIdValid && isContentValid && isUserValid) {
-            Post commentedPost = postRepository.getReferenceById(id);
+            Post commentedPost = postRepository.getReferenceById(postId);
             Comment newComment = new Comment(commentDto.getContent(), owner.getUsername());
             Set<Comment> commentsList = commentedPost.getComments();
 
@@ -70,17 +70,21 @@ public class CommentValidatorImp implements CommentValidator{
     }
 
     @Override
-    public boolean editTheComment(CommentDto commentDto, Long commentId) {
+    public boolean editTheComment(CommentDto commentDto, Long commentId, String username) {
         Long postId = commentRepository.getReferenceById(commentId).getPostId();
-
         boolean isIdValid = validateId(postId);
         boolean isContentValid = validateContent(commentDto.getContent());
-        User owner = userRepository.getReferenceById(commentDto.getUserId());
+        User owner = userRepository.findByUsername(username);
         boolean isUserValid = commentService.checkEmailVerifiedAt(owner.getUsername());
+        Comment editedComment = commentRepository.getReferenceById(commentId);
+
+        if (!editedComment.getOwner().equals(owner.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the comment!");
+        }
 
         if (isIdValid && isContentValid && isUserValid) {
             Post editedPost = postRepository.getReferenceById(postId);
-            Comment editedComment = commentRepository.getReferenceById(commentId);
+
             Set<Comment> commentsList = editedPost.getComments();
 
             editedComment.setContent(commentDto.getContent());
