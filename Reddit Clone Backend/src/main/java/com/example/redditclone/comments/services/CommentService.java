@@ -9,5 +9,5 @@ public interface CommentService {
 
     public boolean downvoteComment(long id, String downvotedByUsername);
 
-    public boolean deleteComment(long id);
+    public boolean deleteComment(long id, String username);
 }
