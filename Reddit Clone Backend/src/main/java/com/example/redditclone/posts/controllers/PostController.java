@@ -4,8 +4,6 @@ import com.example.redditclone.dtos.*;
 import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.services.PostService;
 import com.example.redditclone.posts.services.PostValidator;
-import com.example.redditclone.users.models.User;
-import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +21,11 @@ import java.util.List;
 public class PostController {
     private PostValidator postValidator;
     private PostService postService;
-    private UserRepository userRepository;
 
     @Autowired
-    public PostController(PostValidator postValidator, PostService postService, UserRepository userRepository) {
+    public PostController(PostValidator postValidator, PostService postService) {
         this.postValidator = postValidator;
         this.postService = postService;
-        this.userRepository = userRepository;
     }
 
     private String retrieveUsernameFromToken() {
