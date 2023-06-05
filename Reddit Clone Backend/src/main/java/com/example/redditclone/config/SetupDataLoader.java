@@ -3,7 +3,6 @@ package com.example.redditclone.config;
 import com.example.redditclone.users.models.Privilege;
 import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
-import com.example.redditclone.users.repositories.PermissionRepository;
 import com.example.redditclone.users.repositories.PrivilegeRepository;
 import com.example.redditclone.users.repositories.RoleRepository;
 import com.example.redditclone.users.repositories.UserRepository;
@@ -20,20 +19,20 @@ import java.util.List;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
-
     boolean alreadySetup = false;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
     private PrivilegeRepository privilegeRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.privilegeRepository = privilegeRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -49,7 +48,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-        User user = new User("Admin", "email@test.com", "someTestPassword1", false);
+        User user = new User("Admin", "email@test.com", passwordEncoder.encode("someTestPassword1"), false);
         user.setVerifiedAt(LocalDateTime.now());
         user.setRoles(Arrays.asList(adminRole));
         userRepository.save(user);

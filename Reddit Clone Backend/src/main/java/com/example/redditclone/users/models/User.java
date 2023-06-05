@@ -1,10 +1,8 @@
 package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "user")

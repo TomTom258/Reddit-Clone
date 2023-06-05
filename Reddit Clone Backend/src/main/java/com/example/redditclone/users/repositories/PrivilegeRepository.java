@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableJpaRepositories
 public interface PrivilegeRepository extends JpaRepository<Privilege, Long> {
+    Privilege findByName(String name);
 }
