@@ -5,7 +5,9 @@ import com.example.redditclone.comments.repositories.CommentRepository;
 import com.example.redditclone.dtos.CommentDto;
 import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.repositories.PostRepository;
+import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
+import com.example.redditclone.users.repositories.RoleRepository;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,17 +23,19 @@ public class CommentValidatorImp implements CommentValidator{
     CommentRepository commentRepository;
     UserRepository userRepository;
     CommentService commentService;
+    RoleRepository roleRepository;
 
     @Autowired
     public CommentValidatorImp(PostRepository postRepository, CommentRepository commentRepository, UserRepository userRepository,
-                               CommentService commentService) {
+                               CommentService commentService, RoleRepository roleRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.commentService = commentService;
+        this.roleRepository = roleRepository;
     }
-    @Override
-    public boolean validateId(Long id) {
+
+    private boolean validateId(Long id) {
         Optional<Post> post = postRepository.findById(id);
 
         if (post.isEmpty()) {
@@ -40,8 +44,7 @@ public class CommentValidatorImp implements CommentValidator{
         return true;
     }
 
-    @Override
-    public boolean validateContent(String content) {
+    private boolean validateContent(String content) {
         if (content.length() < 2) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment must be at least 2 characters long!");
         }
@@ -71,15 +74,20 @@ public class CommentValidatorImp implements CommentValidator{
 
     @Override
     public boolean editTheComment(CommentDto commentDto, Long commentId, String username) {
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        Role moderatorRole = roleRepository.findByName("ROLE_MODERATOR");
         Long postId = commentRepository.getReferenceById(commentId).getPostId();
-        boolean isIdValid = validateId(postId);
-        boolean isContentValid = validateContent(commentDto.getContent());
-        User owner = userRepository.findByUsername(username);
-        boolean isUserValid = commentService.checkEmailVerifiedAt(owner.getUsername());
+        User user = userRepository.findByUsername(username);
         Comment editedComment = commentRepository.getReferenceById(commentId);
 
-        if (!editedComment.getOwner().equals(owner.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the comment!");
+        boolean isIdValid = validateId(postId);
+        boolean isContentValid = validateContent(commentDto.getContent());
+        boolean isUserValid = commentService.checkEmailVerifiedAt(user.getUsername());
+        boolean isUserAlsoOwner = editedComment.getOwner().equals(username);
+        boolean hasUserRole = user.getRoles().contains(adminRole) || user.getRoles().contains(moderatorRole);
+
+        if (!isUserAlsoOwner && !hasUserRole) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't modify this Comment!");
         }
 
         if (isIdValid && isContentValid && isUserValid) {
