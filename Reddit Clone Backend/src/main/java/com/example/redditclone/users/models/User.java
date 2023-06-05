@@ -2,8 +2,8 @@ package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
 
-import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,14 +58,14 @@ public class User {
     private String resetPasswordToken;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_permissions", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permissions_id")})
-    @Column(name = "permissions", nullable = true)
-    private Set<Permission> permissions;
+    @JoinTable(name = "user_privileges", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "privileges_id")})
+    @Column(name = "privileges", nullable = true)
+    private Collection<Privilege> privileges;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "roles_id")})
     @Column(name = "roles", nullable = true)
-    private Set<Role> roles;
+    private Collection<Role> roles;
 
     public User() {
         this.verificationToken = UUID.randomUUID().toString();
@@ -167,19 +167,19 @@ public class User {
         this.karma = karma;
     }
 
-    public Set<Permission> getPermissions() {
-        return permissions;
+    public Collection<Privilege> getPrivileges() {
+        return privileges;
     }
 
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
+    public void setPrivileges(Collection<Privilege> privileges) {
+        this.privileges = privileges;
     }
 
-    public Set<Role> getRoles() {
+    public Collection<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 

@@ -1,9 +1,8 @@
 package com.example.redditclone.users.models;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,19 +14,19 @@ class RoleTest {
         // Arrange
         String ability = "ADMIN";
         Set<User> users = new HashSet<>();
-        Set<Permission> permissions = new HashSet<>();
+        Set<Privilege> privileges = new HashSet<>();
 
         // Act
         Role role = new Role();
         role.setAbility(ability);
         role.setUsers(users);
-        role.setPermissions(permissions);
+        role.setPermissions(privileges);
 
         // Assert
         assertEquals(null, role.getId());
         assertEquals(ability, role.getAbility());
         assertEquals(users, role.getUsers());
-        assertEquals(permissions, role.getPermissions());
+        assertEquals(privileges, role.getPermissions());
     }
 
     @Test
@@ -62,10 +61,10 @@ class RoleTest {
         // Arrange
         Role role = new Role();
         Set<User> users = new HashSet<>();
-        Set<Permission> permissions = new HashSet<>();
+        Set<Privilege> privileges = new HashSet<>();
 
         // Act
-        Role updatedRole = role.setAbility("USER").setUsers(users).setPermissions(permissions);
+        Role updatedRole = role.setAbility("USER").setUsers(users).setPermissions(privileges);
 
         // Assert
         assertSame(role, updatedRole);

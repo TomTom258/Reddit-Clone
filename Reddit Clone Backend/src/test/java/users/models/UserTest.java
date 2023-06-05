@@ -1,6 +1,6 @@
 package users.models;
 
-import com.example.redditclone.users.models.Permission;
+import com.example.redditclone.users.models.Privilege;
 import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,15 +13,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserTest {
 
     @Mock
-    private Permission permission1;
+    private Privilege privilege1;
 
     @Mock
-    private Permission permission2;
+    private Privilege privilege2;
 
     @Mock
     private Role role1;
@@ -87,15 +86,15 @@ class UserTest {
     @Test
     void testGetPermissions() {
         User user = new User();
-        Set<Permission> permissions = new HashSet<>();
-        permissions.add(permission1);
-        permissions.add(permission2);
+        Set<Privilege> privileges = new HashSet<>();
+        privileges.add(privilege1);
+        privileges.add(privilege2);
 
-        user.setPermissions(permissions);
+        user.setPermissions(privileges);
 
         assertEquals(2, user.getPermissions().size());
-        assertTrue(user.getPermissions().contains(permission1));
-        assertTrue(user.getPermissions().contains(permission2));
+        assertTrue(user.getPermissions().contains(privilege1));
+        assertTrue(user.getPermissions().contains(privilege2));
     }
 
     @Test
