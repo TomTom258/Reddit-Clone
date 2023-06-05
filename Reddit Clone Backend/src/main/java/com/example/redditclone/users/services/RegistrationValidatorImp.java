@@ -2,7 +2,9 @@ package com.example.redditclone.users.services;
 
 import com.example.redditclone.dtos.PasswordTokenRequestDto;
 import com.example.redditclone.security.TotpManager;
+import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
+import com.example.redditclone.users.repositories.RoleRepository;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,12 +25,15 @@ public class RegistrationValidatorImp implements RegistrationValidator {
     private UserRepository userRepository;
     private TotpManager totpManager;
     private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public RegistrationValidatorImp(UserRepository userRepository, TotpManager totpManager, PasswordEncoder passwordEncoder) {
+    public RegistrationValidatorImp(UserRepository userRepository, TotpManager totpManager, PasswordEncoder passwordEncoder,
+                                    RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.totpManager = totpManager;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -84,6 +91,8 @@ public class RegistrationValidatorImp implements RegistrationValidator {
             if (newUser.isMfa()) {
                 newUser.setSecret(totpManager.generateSecret());
             }
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            newUser.setRoles(Collections.singletonList(userRole));
             userRepository.save(newUser);
             return true;
         } else {

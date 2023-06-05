@@ -1,6 +1,8 @@
 package com.example.redditclone.users.models;
 
 import jakarta.persistence.*;
+
+import java.util.Collection;
 import java.util.Set;
 
 @Entity(name = "role")
@@ -11,43 +13,43 @@ public class Role {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "ability", nullable = false)
-    private String ability;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @ManyToMany(mappedBy = "roles")
     @Column(name = "users", nullable = true)
     private Set<User> users;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "role_permissions", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permissions_id")})
-    @Column(name = "permissions", nullable = true)
-    private Set<Permission> permissions;
+    @JoinTable(name = "role_privileges", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "privileges_id")})
+    @Column(name = "privileges", nullable = true)
+    private Collection<Privilege> privileges;
 
     public Role() {
     }
 
-    public Role(String ability) {
-        this.ability = ability;
+    public Role(String name) {
+        this.name = name;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getAbility() {
-        return ability;
+    public String getName() {
+        return name;
     }
 
     public Set<User> getUsers() {
         return users;
     }
 
-    public Set<Permission> getPermissions() {
-        return permissions;
+    public Collection<Privilege> getPrivileges() {
+        return privileges;
     }
 
-    public Role setAbility(String ability) {
-        this.ability = ability;
+    public Role setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -56,8 +58,8 @@ public class Role {
         return this;
     }
 
-    public Role setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
+    public Role setPrivileges(Collection<Privilege> privileges) {
+        this.privileges = privileges;
         return this;
     }
 }
