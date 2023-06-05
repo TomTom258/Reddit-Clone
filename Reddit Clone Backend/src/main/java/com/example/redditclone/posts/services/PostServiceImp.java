@@ -2,8 +2,10 @@ package com.example.redditclone.posts.services;
 
 import com.example.redditclone.comments.models.Comment;
 import com.example.redditclone.posts.models.Post;
+import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
 import com.example.redditclone.posts.repositories.PostRepository;
+import com.example.redditclone.users.repositories.RoleRepository;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,13 @@ import java.util.Set;
 public class PostServiceImp implements PostService{
     private PostRepository postRepository;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public PostServiceImp(PostRepository postRepository, UserRepository userRepository) {
+    public PostServiceImp(PostRepository postRepository, UserRepository userRepository, RoleRepository roleRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -111,15 +115,15 @@ public class PostServiceImp implements PostService{
 
     @Override
     public boolean deletePost(long id, String username) {
-        if (!postRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post doesn't exists!");
-        }
-
-        Post deletedPost = postRepository.getReferenceById(id);
         User user = userRepository.findByUsername(username);
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        Post deletedPost = postRepository.getReferenceById(id);
 
-        if (!deletedPost.getOwner().equals(user.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the Post!");
+        boolean isUserAlsoOwner = deletedPost.getOwner().equals(username);
+        boolean hasUserRole = user.getRoles().contains(adminRole);
+
+        if (!isUserAlsoOwner && !hasUserRole) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't delete this Post!");
         }
 
         postRepository.delete(deletedPost);

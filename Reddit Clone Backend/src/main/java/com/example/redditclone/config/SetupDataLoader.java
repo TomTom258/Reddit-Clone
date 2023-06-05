@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -52,7 +53,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         createRoleIfNotFound("ROLE_MODERATOR", moderatorPrivileges);
-        createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
+        createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege, writePrivilege));
 
         String adminUsername = System.getenv("ADMIN_USERNAME");
         String adminPassword = System.getenv("ADMIN_PASSWORD");
@@ -68,9 +69,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     Privilege createPrivilegeIfNotFound(String name) {
-
         Privilege privilege = privilegeRepository.findByName(name);
-        if (privilege == null) {
+        if (Objects.isNull(privilege)) {
             privilege = new Privilege(name);
             privilegeRepository.save(privilege);
         }
@@ -78,9 +78,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    Role createRoleIfNotFound(
-            String name, List<Privilege> privileges) {
-
+    Role createRoleIfNotFound(String name, List<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role(name);
