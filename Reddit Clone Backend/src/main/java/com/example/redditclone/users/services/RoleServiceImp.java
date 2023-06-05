@@ -23,8 +23,7 @@ public class RoleServiceImp implements RoleService{
         this.userRepository = userRepository;
     }
 
-    @Override
-    public boolean grantRoleToUser(String role, String username) {
+    private boolean validateRoleAndUser(String role, String username) {
         if (!roleRepository.existsByName(role)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role doesn't exists!");
         }
@@ -32,14 +31,42 @@ public class RoleServiceImp implements RoleService{
         if (!userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exists!");
         }
-
-        Role grantedRole = roleRepository.findByName(role);
-        User user = userRepository.findByUsername(username);
-        Set<Role> newRoles = new HashSet<>(user.getRoles());
-
-        newRoles.add(grantedRole);
-        user.setRoles(newRoles);
-        userRepository.save(user);
         return true;
     }
+
+    @Override
+    public boolean grantRoleToUser(String role, String username) {
+        boolean isValidated = validateRoleAndUser(role, username);
+
+        if (isValidated) {
+            Role grantedRole = roleRepository.findByName(role);
+            User user = userRepository.findByUsername(username);
+            Set<Role> newRoles = new HashSet<>(user.getRoles());
+
+            newRoles.add(grantedRole);
+            user.setRoles(newRoles);
+            userRepository.save(user);
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean stripRoleFromUser(String role, String username) {
+        boolean isValidated = validateRoleAndUser(role, username);
+
+        if (isValidated) {
+            Role stripedRole = roleRepository.findByName(role);
+            User user = userRepository.findByUsername(username);
+            Set<Role> newRoles = new HashSet<>(user.getRoles());
+
+            newRoles.remove(stripedRole);
+            user.setRoles(newRoles);
+            userRepository.save(user);
+            return true;
+        }
+        return true;
+    }
+
+
 }
