@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Role findByName(String name);
+    boolean existsByName(String name);
 }
