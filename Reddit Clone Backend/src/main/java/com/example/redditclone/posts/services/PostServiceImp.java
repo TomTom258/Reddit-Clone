@@ -115,11 +115,12 @@ public class PostServiceImp implements PostService{
 
     @Override
     public boolean deletePost(long id, String username) {
-        User user = userRepository.findByUsername(username);
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         Post deletedPost = postRepository.getReferenceById(id);
+        User user = userRepository.findByUsername(username);
+        User owner = userRepository.findByUsername(deletedPost.getOwner());
 
-        boolean isUserAlsoOwner = deletedPost.getOwner().equals(username);
+        boolean isUserAlsoOwner = owner.equals(user);
         boolean hasUserRole = user.getRoles().contains(adminRole);
 
         if (!isUserAlsoOwner && !hasUserRole) {

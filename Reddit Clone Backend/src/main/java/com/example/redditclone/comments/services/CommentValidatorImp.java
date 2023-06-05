@@ -77,13 +77,14 @@ public class CommentValidatorImp implements CommentValidator{
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         Role moderatorRole = roleRepository.findByName("ROLE_MODERATOR");
         Long postId = commentRepository.getReferenceById(commentId).getPostId();
-        User user = userRepository.findByUsername(username);
         Comment editedComment = commentRepository.getReferenceById(commentId);
+        User user = userRepository.findByUsername(username);
+        User owner = userRepository.findByUsername(editedComment.getOwner());
 
         boolean isIdValid = validateId(postId);
         boolean isContentValid = validateContent(commentDto.getContent());
         boolean isUserValid = commentService.checkEmailVerifiedAt(user.getUsername());
-        boolean isUserAlsoOwner = editedComment.getOwner().equals(username);
+        boolean isUserAlsoOwner = owner.equals(user);
         boolean hasUserRole = user.getRoles().contains(adminRole) || user.getRoles().contains(moderatorRole);
 
         if (!isUserAlsoOwner && !hasUserRole) {

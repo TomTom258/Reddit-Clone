@@ -66,13 +66,14 @@ public class PostValidatorImp implements PostValidator{
     public boolean editThePost(Post post, Long id, String username) {
         Post currentPost = postRepository.getReferenceById(id);
         User user = userRepository.findByUsername(username);
+        User owner = userRepository.findByUsername(currentPost.getOwner());
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         Role moderatorRole = roleRepository.findByName("ROLE_MODERATOR");
 
         boolean isTitleValid = validateTitle(post);
         boolean isContentValid = validateContent(post);
         boolean isUserVerified = postService.checkEmailVerifiedAt(post.getOwner());
-        boolean isUserAlsoOwner = currentPost.getOwner().equals(username);
+        boolean isUserAlsoOwner = owner.equals(user);
         boolean hasUserRole = user.getRoles().contains(adminRole) || user.getRoles().contains(moderatorRole);
 
         if (!isUserAlsoOwner && !hasUserRole) {

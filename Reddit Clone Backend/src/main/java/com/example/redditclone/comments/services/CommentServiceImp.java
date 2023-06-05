@@ -4,7 +4,9 @@ import com.example.redditclone.comments.models.Comment;
 import com.example.redditclone.comments.repositories.CommentRepository;
 import com.example.redditclone.posts.models.Post;
 import com.example.redditclone.posts.repositories.PostRepository;
+import com.example.redditclone.users.models.Role;
 import com.example.redditclone.users.models.User;
+import com.example.redditclone.users.repositories.RoleRepository;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +22,15 @@ public class CommentServiceImp implements CommentService {
     CommentRepository commentRepository;
     UserRepository userRepository;
     PostRepository postRepository;
+    RoleRepository roleRepository;
 
     @Autowired
-    public CommentServiceImp(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
+    public CommentServiceImp(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository,
+                             RoleRepository roleRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -118,10 +123,15 @@ public class CommentServiceImp implements CommentService {
         }
 
         Comment deletedComment = commentRepository.getReferenceById(id);
+        User user = userRepository.findByUsername(username);
         User owner = userRepository.findByUsername(deletedComment.getOwner());
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
 
-        if (!username.equals(owner.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User isn't owner of the comment!");
+        boolean isUserAlsoOwner = owner.equals(user);
+        boolean hasUserRole = user.getRoles().contains(adminRole);
+
+        if (!isUserAlsoOwner && !hasUserRole) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't delete this Comment!");
         }
 
         Long postId = commentRepository.getReferenceById(id).getPostId();
