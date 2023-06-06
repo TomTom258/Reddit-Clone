@@ -1,6 +1,7 @@
 package com.example.redditclone.security;
 
 import com.example.redditclone.users.models.Role;
+import com.example.redditclone.users.models.User;
 import com.example.redditclone.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,11 +18,16 @@ import java.util.stream.Collectors;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private User user;
     private UserRepository userRepository;
 
     @Autowired
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository {
         this.userRepository = userRepository;
+    }
+
+    public boolean isAccountNonLocked() {
+        return user.isAccountNonLocked();
     }
 
     @Override
