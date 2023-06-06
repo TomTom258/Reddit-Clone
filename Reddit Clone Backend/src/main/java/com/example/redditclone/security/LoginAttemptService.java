@@ -15,11 +15,8 @@ public class LoginAttemptService {
 
     public static final int MAX_ATTEMPT = 10;
     private LoadingCache<String, Integer> attemptsCache;
+    @Autowired
     private HttpServletRequest request;
-
-    public LoginAttemptService(HttpServletRequest request) {
-        this.request = request;
-    }
 
     public LoginAttemptService() {
         super();
