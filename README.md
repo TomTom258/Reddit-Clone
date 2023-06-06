@@ -11,6 +11,7 @@
      - Spring Boot app, REST API, JPA, Hibernate, Spring Security, Mailtrap, Thymeleaf implementation
      - Junit / Mockito [unit/integration testing]
      - JWT based authentication / authorization
+     - User can't bruteforce login details. After 10 failed attempts it gest blocked from the server based on his IP address
      - Post / Comment System (create, edit, up/downvote, delete) [Post -> Comment @OneToMany]
      - Fully implemented Roles / Privileges => Admin can grant/strip roles from users (such as Moderator) => protected endpoint from JWT
      only accessible with ROLE_ADMIN
@@ -42,7 +43,6 @@
      As for right now, these are things that miss and I would like to implement them:
       - Sub-Reddits(Forums)
       - Nested comment system (this will be a big one)
-      - Login Timeout (after X tries user gets flagged from server and is restricted to login for a certain amount of time)
       - 100% coverage from unit / integration tests
 
     After finishing this I'll move to the FRONTEND part and will connect all of the features to create fully working Full-Stack application.
