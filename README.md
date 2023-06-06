@@ -11,7 +11,7 @@
      - Spring Boot app, REST API, JPA, Hibernate, Spring Security, Mailtrap, Thymeleaf implementation
      - Junit / Mockito [unit/integration testing]
      - JWT based authentication / authorization
-     - User can't bruteforce login details. After 10 failed attempts it gest blocked from the server based on his IP address
+     - User can't bruteforce login details. After 10 failed attempts user / bot gets blocked from the server based on his IP address for 24 hours
      - Post / Comment System (create, edit, up/downvote, delete) [Post -> Comment @OneToMany]
      - Fully implemented Roles / Privileges => Admin can grant/strip roles from users (such as Moderator) => protected endpoint from JWT
      only accessible with ROLE_ADMIN
