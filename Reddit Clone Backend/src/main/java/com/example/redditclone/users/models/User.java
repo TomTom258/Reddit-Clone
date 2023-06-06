@@ -3,6 +3,7 @@ package com.example.redditclone.users.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "user")
@@ -40,7 +41,7 @@ public class User {
     @Column(name = "mfa")
     private boolean mfa;
 
-    @Column(name  = "secret")
+    @Column(name = "secret")
     private String secret;
 
     @Column(name = "profilePictureFilePath")
@@ -54,6 +55,8 @@ public class User {
 
     @Column(name = "resetPasswordToken", nullable = true)
     private String resetPasswordToken;
+
+    private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_privileges", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "privileges_id")})
@@ -211,5 +214,13 @@ public class User {
 
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

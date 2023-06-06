@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -19,11 +20,14 @@ public class SecurityConfig {
 
     private JwtAuthEntryPoint authEntryPoint;
     private CustomUserDetailsService userDetailsService;
+    private CustomAuthenticationFailureHandler failureHandler;
 
     @Autowired
-    public SecurityConfig(JwtAuthEntryPoint authEntryPoint, CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(JwtAuthEntryPoint authEntryPoint, CustomUserDetailsService userDetailsService,
+                          CustomAuthenticationFailureHandler failureHandler) {
         this.authEntryPoint = authEntryPoint;
         this.userDetailsService = userDetailsService;
+        this.failureHandler = failureHandler;
     }
 
     @Bean
@@ -41,6 +45,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/roles/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/api/login")
+                .failureHandler(failureHandler)
+                .permitAll()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic();
