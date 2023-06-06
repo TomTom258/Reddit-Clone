@@ -13,8 +13,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByVerificationToken(String token);
     Boolean existsByProfilePictureFilePath(String profilePictureFilePath);
     User findByResetPasswordToken(String token);
-
-    @Query("UPDATE User u SET u.failedAttempt = ?1 WHERE u.email = ?2")
-    @Modifying
-    public void updateFailedAttempts(int failAttempts, String email);
 }
