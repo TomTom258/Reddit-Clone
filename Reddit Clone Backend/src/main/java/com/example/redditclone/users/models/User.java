@@ -3,6 +3,7 @@ package com.example.redditclone.users.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "user")
@@ -54,6 +55,15 @@ public class User {
 
     @Column(name = "resetPasswordToken", nullable = true)
     private String resetPasswordToken;
+
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
+
+    @Column(name = "failed_attempt")
+    private int failedAttempt;
+
+    @Column(name = "lock_time")
+    private Date lockTime;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_privileges", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "privileges_id")})
