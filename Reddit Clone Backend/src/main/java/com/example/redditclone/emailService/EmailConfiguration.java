@@ -13,7 +13,6 @@ import static javax.xml.bind.DatatypeConverter.parseInt;
 
 @org.springframework.context.annotation.Configuration
 public class EmailConfiguration {
-
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

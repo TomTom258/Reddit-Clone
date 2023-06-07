@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
-
     private UserRepository userRepository;
     private LoginAttemptService loginAttemptService;
     private RoleRepository roleRepository;
@@ -51,7 +49,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                         " ", " ", true, true, true, true,
                         mapRolesToAuthorities(Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
             }
-
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,
                     mapRolesToAuthorities(user.getRoles()));

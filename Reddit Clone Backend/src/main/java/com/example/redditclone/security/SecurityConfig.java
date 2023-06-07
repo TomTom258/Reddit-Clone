@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private JwtAuthEntryPoint authEntryPoint;
     private CustomUserDetailsService userDetailsService;
     private CustomAuthenticationFailureHandler failureHandler;

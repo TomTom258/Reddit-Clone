@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity(name = "comment")
 @Table(name = "Comments")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)

@@ -19,11 +19,11 @@ import java.util.Set;
 
 @Service
 public class CommentValidatorImp implements CommentValidator{
-    PostRepository postRepository;
-    CommentRepository commentRepository;
-    UserRepository userRepository;
-    CommentService commentService;
-    RoleRepository roleRepository;
+    private PostRepository postRepository;
+    private CommentRepository commentRepository;
+    private UserRepository userRepository;
+    private CommentService commentService;
+    private RoleRepository roleRepository;
 
     @Autowired
     public CommentValidatorImp(PostRepository postRepository, CommentRepository commentRepository, UserRepository userRepository,

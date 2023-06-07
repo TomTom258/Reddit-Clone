@@ -8,7 +8,6 @@ import java.util.Set;
 @Entity
 @Table(name = "Privileges")
 public class Privilege {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
