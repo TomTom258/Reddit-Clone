@@ -20,6 +20,7 @@ public class RoleController {
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
+
     @PostMapping("/")
     public ResponseEntity<ResponseDto> grantRoleToUser(@RequestBody RoleDto roleDto) {
         try {

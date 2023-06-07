@@ -19,10 +19,10 @@ import java.util.Set;
 @Service
 public class CommentServiceImp implements CommentService {
 
-    CommentRepository commentRepository;
-    UserRepository userRepository;
-    PostRepository postRepository;
-    RoleRepository roleRepository;
+    private CommentRepository commentRepository;
+    private UserRepository userRepository;
+    private PostRepository postRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
     public CommentServiceImp(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository,
@@ -114,7 +114,6 @@ public class CommentServiceImp implements CommentService {
         }
         return true;
     }
-
 
     @Override
     public boolean deleteComment(long id, String username) {

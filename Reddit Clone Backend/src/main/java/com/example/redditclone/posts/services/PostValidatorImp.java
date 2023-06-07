@@ -13,12 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 
 @Service
 public class PostValidatorImp implements PostValidator{
-
     private PostRepository postRepository;
     private PostService postService;
     private UserRepository userRepository;

@@ -19,7 +19,8 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     private LoginAttemptService loginAttemptService;
 
     @Autowired
-    CustomAuthenticationFailureHandler(HttpServletRequest request, HttpServletResponse response, LoginAttemptService loginAttemptService) {
+    CustomAuthenticationFailureHandler(HttpServletRequest request, HttpServletResponse response,
+                                       LoginAttemptService loginAttemptService) {
         this.loginAttemptService = loginAttemptService;
         this.request = request;
         this.response = response;

@@ -1,7 +1,6 @@
 package com.example.redditclone.dtos;
 
 public class MfaResponseDto extends ResponseDto {
-
     private Integer status;
     private String message;
     private Long id;

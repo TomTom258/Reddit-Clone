@@ -17,7 +17,6 @@ import java.util.UUID;
 
 @Service
 public class EmailSenderServiceImp implements EmailSenderService {
-
     private JavaMailSender emailSender;
     private TemplateEngine templateEngine;
     private UserRepository userRepository;
