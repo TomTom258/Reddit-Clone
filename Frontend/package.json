@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "@angular/cli": "^16.2.1",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
     "@angular/core": "^16.2.4"
   }
 }
