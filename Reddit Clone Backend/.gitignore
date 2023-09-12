@@ -37,4 +37,8 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 .metadata/
+=======
+/.metadata/
+>>>>>>> 96074d747e8c6bf7874dcdf7c653ba725c9431fe
